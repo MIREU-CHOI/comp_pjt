@@ -17,8 +17,14 @@ function Join2(props) {
     const [ZipAddr, setZipAddr] = useState("");
     const [DetailAddr, setDetailAddr] = useState("");
     const [Name, setName] = useState("");
-    const [ConfirmPassword, setConfirmPassword] = useState("");
+    const [ConfirmPassword, setConfirmPassword] = useState(""); 
+    const [UserCerNum, setUserCerNum] = useState("");
+    const [ResCerNum, setResCerNum] = useState(0);
+    const [phoneChkVal, setPhoneChkVal] = useState(false);
 
+    const onUserCerNumHandler = (event) => {
+        setUserCerNum(event.currentTarget.value);
+    }
     const onIdHandler = (event) => {
         setId(event.currentTarget.value);
     }
@@ -125,9 +131,10 @@ function Join2(props) {
     }
 
     // ----------- coolsms ---------------------------------------------------
-    const onMobileChkHandler = (event) => {
+    const onCerNumSendHandler = (event) => {
         event.preventDefault();
         console.log('인증번호 전송 버튼 click!');
+        console.log('Phone => '+Phone);
         // let body = {
         //     membId: Id
         // }
@@ -138,13 +145,53 @@ function Join2(props) {
         // headers: {
         //     "Content-Type": "application/json",
         //     }
-        }).then((res) => {
-            console.log(res.data);
-            if(res.data == false) {
-                alert("이미 존재하는 ID 입니다.")                     
-            } else{
-                alert("사용 가능한 ID 입니다.")
-        }})
+        }).then((res) => { // 인증번호 반환값 
+            console.log("res => "+res);
+            console.log("typeof(res) => "+ typeof(res));
+            console.log("res.data '인증번호 반환값' => "+ res.data);
+            console.log("typeof(res.data) => "+ typeof(res.data));
+
+            setResCerNum(res.data);
+            // if(res.data != null) {
+            //     alert("not null")                     
+            // } else{
+            //     alert("null")
+            // }
+        })
+    }
+
+    const onCerNumChkHandler = (event) => {
+        event.preventDefault();
+        console.log('인증번호 확!인! 버튼 click!');
+        console.log('UserCerNum => '+ UserCerNum);
+        console.log('typeof(UserCerNum) => '+ typeof(UserCerNum));
+        console.log('ResCerNum => '+ ResCerNum);
+        console.log('typeof(ResCerNum) => '+ typeof(ResCerNum));
+
+        if(UserCerNum == ResCerNum){
+            setPhoneChkVal(true);
+            alert("인증되었습니다.")
+        }else{
+            alert("인증번호가 일치하지 않습니다.")
+        }
+        // let body = {
+        //     membId: Id
+        // }
+        // const data = JSON.stringify(body);
+
+        // axios.get("http://localhost:8888/check/sendSMS/" +  Phone,
+        //  {
+        // headers: {
+        //     "Content-Type": "application/json",
+        //     }
+        // }).then((res) => { // 인증번호 반환값 
+        //     console.log(res.data);
+        //     if(res.data != null) {
+        //         alert("not null")                     
+        //     } else{
+        //         alert("null")
+        //     }
+        // })
     }
     
     /*
@@ -178,14 +225,8 @@ function Join2(props) {
         console.log(error.response.data);
     });
     */
-
-    
-
     // ----------- coolsms ---------------------------------------------------
     
-
-
-
 
     return (
         <div className='container'
@@ -242,13 +283,14 @@ function Join2(props) {
                     <div className='inputGroup'>
                         <Form.Control type="text" value={Phone} onChange={onPhoneHandler}
                             placeholder="- 없이 숫자만 입력하세요." style={{ marginRight:'10px'}}/>
-                        <Button variant="primary" type="button" style={{width:'180px'}} >
+                        <Button variant="primary" type="button" style={{width:'180px'}} onClick={onCerNumSendHandler}>
                             인증번호 전송
                         </Button>
                     </div>
                     <div className='inputGroup'>
-                        <Form.Control type="text" placeholder="인증번호 입력" style={{ marginRight:'10px'}}/>
-                        <Button variant="primary" type="button" style={{width:'180px'}}  >
+                        <Form.Control type="text" value={UserCerNum} onChange={onUserCerNumHandler}
+                            placeholder="인증번호 입력" style={{ marginRight:'10px'}}/>
+                        <Button variant="primary" type="button" style={{width:'180px'}} onClick={onCerNumChkHandler} >
                             인증번호 확인
                         </Button>
                     </div>

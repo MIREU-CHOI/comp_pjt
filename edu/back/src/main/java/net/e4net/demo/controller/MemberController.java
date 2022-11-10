@@ -55,17 +55,11 @@ public class MemberController {
 	}
 	
 	@GetMapping("/check/sendSMS/{mobileNo}")
-    public @ResponseBody String sendSMS(String mobileNo) {
-        Random rand  = new Random();
-        String numStr = "";
-        for(int i=0; i<4; i++) {
-            String ran = Integer.toString(rand.nextInt(10));
-            numStr+=ran;
-        }
+    public ResponseEntity<String> sendSMS(@PathVariable("mobileNo") String mobileNo) {
         System.out.println("수신자 번호 : " + mobileNo);
-        System.out.println("인증번호 : " + numStr);
-        certificationService.certifiedPhoneNumber(mobileNo,numStr);
-        return numStr;
+        String cerNum = certificationService.certifiedPhoneNumber(mobileNo);
+        System.out.println("인증번호 : " + cerNum);
+        return ResponseEntity.status(HttpStatus.OK).body(cerNum);
     }
 
 	
