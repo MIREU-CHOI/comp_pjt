@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,41 +32,41 @@ public class Goods extends CommonData{
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GOODS_SEQ_GENERATOR")
 	@Column(name = "GOODS_NO", length = 10)
-	private String goodsNo;
+	private String goodsNo;		// 상품번호
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "MERCHANT_SN", referencedColumnName = "MERCHANT_SN", updatable = false, insertable = false)
-	private Merchant merchant;
+	private Merchant merchant;	// 가맹점번호
 	
 	@Column(name = "GOODS_NM", length = 200, nullable = false)
-	private String goodsNm;
+	private String goodsNm;		// 상품명
 	
 	@Column(name = "GOODS_MODEL_NO", length = 30)
-	private String goodsModelNo;
+	private String goodsModelNo;// 상품모델번호
 	
 	@Column(name = "GOODS_AMT", length = 15)
-	private Long goodsAmt;
+	private Long goodsAmt;		// 상품 금액
 	
 	@Column(name = "GOODS_QTT", length = 8)
-	private Long goodsQtt;
+	private Long goodsQtt;		// 상품 수량
 	
 	@Column(name = "GOODS_SELL_QTT", length = 8)
-	private Long goodsSellQtt;
+	private Long goodsSellQtt;	// 판매 수량
 	
 	@Column(name = "GOODS_CLS_DT", length = 8)
-	private String goodsClsDt;
+	private String goodsClsDt;	// 판매종료일자
 	
 	@Column(name = "GOODS_SHPP_COST", length = 6)
-	private String goodsShppCost;
+	private String goodsShppCost;// 배송비용
 	
 	@Column(name = "REAL_FILE_NM", length = 100)
-	private String realFileNm;
+	private String realFileNm;	// 실제파일명
 	
 	@Column(name = "GOODS_IMG_PATH", length = 200)
-	private String goodsImgPath;
+	private String goodsImgPath;// 상품이미지 경로
 
 	@Column(name = "GOODS_DESC", length = 4000)
-	private String goodsDesc;
+	private String goodsDesc;	// 상품 설명
 
 	@Builder
 	private Goods(String useYn, Long frstRegistMembSn, Timestamp frstRegistDt, Long lastRegistMembSn,

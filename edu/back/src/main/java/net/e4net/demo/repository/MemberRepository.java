@@ -13,7 +13,7 @@ import net.e4net.demo.dto.MemberDTO;
 import net.e4net.demo.entity.Member;
 
 // https://velog.io/@juno0713/Spring-Security-JWT-React-w3wpg5yi
-// public interface MemberRepository extends JpaRepository<Member, Long>{
+
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
 

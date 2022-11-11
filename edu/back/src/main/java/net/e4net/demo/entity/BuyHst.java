@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,24 +32,25 @@ public class BuyHst extends CommonData{
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "BUY_HST_SEQ_GENERATOR")
 	@Column(name = "BUY_HST_SN", length = 10)
-	private Long buyHstSn;
+	private Long buyHstSn;	// 구매이력일련번호
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "MEMB_SN", referencedColumnName = "MEMB_SN", updatable = false, insertable = false)
-	private Member member;
+	private Member member;	// 회원번호
 	
 	// tb_goods 테이블 컬럼 조인해야 됨!!
-	@Column(name = "GOODS_NO", length = 15, nullable = false)
-	private String goodsNo;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "GOODS_NO", referencedColumnName = "GOODS_NO", nullable = false, updatable = false,insertable = false)
+	private String goodsNo;	// 상품번호
 	
 	@Column(name = "GOODS_AMT", length = 15)
-	private Long goodsAmt;
+	private Long goodsAmt;	// 상품금액
 	
 	@Column(name = "BUY_QTT", length = 8)
-	private Long buyQtt;
+	private Long buyQtt;	// 구매수량
 	
 	@Column(name = "BUY_AMT", length = 15)
-	private Long buyAmt;
+	private Long buyAmt;	// 구매금액
 
 	@Builder
 	private BuyHst(String useYn, Long frstRegistMembSn, Timestamp frstRegistDt, Long lastRegistMembSn,
@@ -62,6 +64,22 @@ public class BuyHst extends CommonData{
 		this.buyQtt = buyQtt;
 		this.buyAmt = buyAmt;
 	}
+	
+	// == 조회 로직 == //
+	/** 전체 주문 가격 조회 **/
+//	public int getTotalPrice() {
+//		int totalPrice = 0;
+//		for ()
+//	}
+	
+	
+	// == 생성 메소드 == //
+//	public static BuyHst createBuyHst(BuyHst entity ) {
+//		return BuyHst.builder().en
+//	}
+	
+	// == 비즈니스 로직 == //
+	// 주문 취소 메소드 
 	
 	
 	
