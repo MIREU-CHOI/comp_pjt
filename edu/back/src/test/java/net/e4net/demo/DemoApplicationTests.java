@@ -13,7 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import net.e4net.demo.entity.MembMoney;
 import net.e4net.demo.entity.Member;
-import net.e4net.demo.entity.UserRole;
+import net.e4net.demo.entity.MembCls;
 import net.e4net.demo.repository.MemberRepository;
 
 @ExtendWith(SpringExtension.class)

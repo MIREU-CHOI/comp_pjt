@@ -5,10 +5,12 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum UserRole {
+public enum MembCls {
 	
 	USER("ROLE_USER"),
-    ADMIN("ROLE_ADMIN");
+    ADMIN("ROLE_ADMIN"),
+    SELLER("ROLE_SELLER")
+    ;
 
     private final String value;
 

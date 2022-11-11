@@ -31,36 +31,36 @@ public class Merchant extends CommonData{
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MERCHANT_SEQ_GENERATOR")
 	@Column(name = "MERCHANT_SN", length = 10)
-	private Long merchantSn;
+	private Long merchantSn;	// 가맹점번호
 
 	@OneToOne   // join 할 때 서로를 참조해야 하니까
 //	@JoinColumn  :  외래키를 정의하는 어노테이션 
 	@JoinColumn(name = "MEMB_SN", referencedColumnName = "MEMB_SN", updatable = false, insertable = false)
-	private Member member;
+	private Member member;		// 회원번호
 	
 	@Column(name = "MERCHANT_NM", length = 100, nullable = false)
-	private String merchantNm;
+	private String merchantNm;	// 가맹점명
 	
 	@Column(name = "MERCHANT_DESC", length = 4000)
-	private String merchantDesc;
+	private String merchantDesc;// 가맹점 설명
 	
 	@Column(name = "MERCHANT_URL", length = 100)
-	private String merchantUrl;
+	private String merchantUrl;	// 홈페이지URL
 	
 	@Column(name = "TEL_NO", length = 20)
-	private String telNo;
+	private String telNo;		// 전화번호
 	
 	@Column(name = "EMAIL_ADDR", length = 100)
-	private String emailAddr;
+	private String emailAddr;	// 이메일주소
 	
 	@Column(name = "ZIP_CD", length = 6)
-	private String zipCd;
+	private String zipCd;		// 우편번호
 	
 	@Column(name = "ZIP_ADDR", length = 150)
-	private String zipAddr;
+	private String zipAddr;		// 우편번호주소
 	
 	@Column(name = "DETAIL_ADDR", length = 150)
-	private String detailAddr;
+	private String detailAddr;	// 상세주소 
 
 	@Builder
 	private Merchant(String useYn, Long frstRegistMembSn, Timestamp frstRegistDt, Long lastRegistMembSn,

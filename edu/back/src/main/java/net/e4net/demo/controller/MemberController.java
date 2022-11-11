@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.e4net.demo.dto.ChangePasswordRequestDTO;
+import net.e4net.demo.dto.MemberDTO;
+import net.e4net.demo.dto.MemberRequestDTO;
 import net.e4net.demo.dto.MemberDTO;
 import net.e4net.demo.entity.Member;
 import net.e4net.demo.service.CertificationService;
@@ -46,7 +49,7 @@ public class MemberController {
 	@GetMapping("/member/exists/{membId}")
 	public ResponseEntity<Boolean> checkMembIdDuplicate(@PathVariable("membId") String membId){
 		System.out.println("membId => "+membId);
-		log.info("Auth Service's Controller Layer :: Call checkMembIdDuplicate Method!");
+		log.info("MemberController Layer :: Call checkMembIdDuplicate Method!");
 	    if(memberService.checkMembIdDuplicate(membId)) {
 	    	return ResponseEntity.status(HttpStatus.OK).body(false);
 	    }
@@ -61,8 +64,36 @@ public class MemberController {
         System.out.println("인증번호 : " + cerNum);
         return ResponseEntity.status(HttpStatus.OK).body(cerNum);
     }
-
 	
+	// ------- 221111 security login & join --------------------
+	
+	// 우편번호 
+	@GetMapping("/member/me")
+    public ResponseEntity<MemberDTO> getMyMemberInfo() {
+		MemberDTO myInfoBySecurity = memberService.getMyInfoBySecurity();
+        System.out.println(myInfoBySecurity.getZipCd());
+        return ResponseEntity.ok((myInfoBySecurity));
+        // return ResponseEntity.ok(memberService.getMyInfoBySecurity());
+    }
+
+    @PostMapping("/member/nickname")
+    public ResponseEntity<MemberDTO> setMembZipCd(@RequestBody MemberDTO request) {
+        return ResponseEntity.ok(memberService.changeMemberZipCd(request.getMembId(), request.getMembPwd()));
+    }
+
+    @PostMapping("/member/password")
+    public ResponseEntity<MemberDTO> setMembPwd(@RequestBody ChangePasswordRequestDTO request) {
+        return ResponseEntity.ok(
+        		memberService.changeMembPwd(
+        				request.getMembId(), 
+        				request.getExMembPwd(), 
+        				request.getNewMembPwd()));
+    }
+	
+	
+	
+	
+    // --------------------------------------------------------------------
 	
 	
 	

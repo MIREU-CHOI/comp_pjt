@@ -41,7 +41,7 @@ public class BuyHst extends CommonData{
 	// tb_goods 테이블 컬럼 조인해야 됨!!
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "GOODS_NO", referencedColumnName = "GOODS_NO", nullable = false, updatable = false,insertable = false)
-	private String goodsNo;	// 상품번호
+	private Goods goodsNo;	// 상품번호
 	
 	@Column(name = "GOODS_AMT", length = 15)
 	private Long goodsAmt;	// 상품금액
@@ -54,7 +54,7 @@ public class BuyHst extends CommonData{
 
 	@Builder
 	private BuyHst(String useYn, Long frstRegistMembSn, Timestamp frstRegistDt, Long lastRegistMembSn,
-			Timestamp lastRegistDt, Long buyHstSn, Member member, String goodsNo, Long goodsAmt, Long buyQtt,
+			Timestamp lastRegistDt, Long buyHstSn, Member member, Goods goodsNo, Long goodsAmt, Long buyQtt,
 			Long buyAmt) {
 		super(useYn, frstRegistMembSn, frstRegistDt, lastRegistMembSn, lastRegistDt);
 		this.buyHstSn = buyHstSn;

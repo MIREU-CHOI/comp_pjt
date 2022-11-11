@@ -17,7 +17,10 @@ import net.e4net.demo.entity.Member;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-	Optional<Member> findByMembId(String membId);
+	// for security login   + 회원가입 (AuthService의 signup 메소드)
+	Optional<Member> findByMembId(String membId); // id로 Member 찾는 로직
+	boolean existsByMembId(String membId);		// id 존재하는지 판별 로직 
+	
 //	Member findByMembId(String membId);
 	
 	@Query(value = "select * from tb_memb where email_addr like '%' || :email || '%'", nativeQuery = true)
@@ -25,8 +28,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	
 	@Query(value = "select * from tb_memb where memb_nm like '%' || :name || '%'" , nativeQuery = true)
 	List<Member> findByName(@Param("name") String name);
-
-	boolean existsByMembId(String membId);
 	
 	boolean existsByMobileNo(String mobileNo);
 

@@ -1,12 +1,16 @@
 package net.e4net.demo.dto;
 
+import java.sql.Timestamp;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import net.e4net.demo.entity.MembCls;
 import net.e4net.demo.entity.MembMoney;
 import net.e4net.demo.entity.Member;
-import net.e4net.demo.entity.UserRole;
 
 //@Getter @Setter
 @AllArgsConstructor
@@ -14,7 +18,7 @@ import net.e4net.demo.entity.UserRole;
 public class MemberDTO {
 	
 	private Long membSn;		// 회원번호	
-	private UserRole userRole;  // 회원구분 - ROLE_ADMIN:어드민, ROLE_SELLER:판매자, ROLE_USER: 사용자
+	private MembCls membCls;  // 회원구분 - ROLE_ADMIN:어드민, ROLE_SELLER:판매자, ROLE_USER: 사용자
 	private String membStatusCd;// 회원상태코드 - 10:가입, 20:휴면, 99:탈퇴
 	private String membId;		// 회원 ID
 	private String membPwd;		// 회원 PWD
@@ -26,6 +30,11 @@ public class MemberDTO {
 	private String detailAddr;	// 상세주소
 	private String lastLoginDtm;// 최종 로그인 일시
 	private MembMoney membMoney;// 회원 머니 entity
+	private String useYn;
+	private Long frstRegistMembSn;
+	private Timestamp frstRegistDt;
+	private Long lastRegistMembSn;
+	private Timestamp lastRegistDt; 
 	
 	
 	public MemberDTO () {
@@ -33,13 +42,13 @@ public class MemberDTO {
 	}
 	
 	/* DTO -> Entity */
-    public Member toEntity() {
+    public Member toEntity(PasswordEncoder passwordEncoder) {
     	Member member = Member.builder()
     			.membSn(membSn)
-                .userRole(userRole)
+                .membCls(membCls)
                 .membStatusCd(membStatusCd)
                 .membId(membId)
-                .membPwd(membPwd)
+                .membPwd(passwordEncoder.encode(membPwd))
                 .membNm(membNm)
                 .mobileNo(mobileNo)
                 .emailAddr(emailAddr)
@@ -48,6 +57,11 @@ public class MemberDTO {
                 .detailAddr(detailAddr)
                 .lastLoginDtm(lastLoginDtm)
 //                .membMoney(membMoney.)
+              .frstRegistMembSn(frstRegistMembSn) //'유저카드이름',
+              .lastRegistMembSn(lastRegistMembSn)  //'유저카드코드',
+              .frstRegistDt(frstRegistDt)  //'유저카드코드',
+              .lastRegistDt(lastRegistDt)  //'유저카드코드',
+              .useYn(useYn)  //'유저카드코드',
                 .build();
         return member;
     }
@@ -56,12 +70,66 @@ public class MemberDTO {
 //        return MembMoney.builder()       
 //       .member(member)  // 'id',
 //       .moneySn(moneySn) //'pw',
-//       .fs(frstRegistMembSn) //'유저카드이름',
-//       .ls(lastRegistMembSn)  //'유저카드코드',
-//       .fd(frstRegistDt)  //'유저카드코드',
-//       .ld(lastRegistDt)  //'유저카드코드',
-//       .uyn(useYn)  //'유저카드코드',
+//       .frstRegistMembSn(frstRegistMembSn) //'유저카드이름',
+//       .lastRegistMembSn(lastRegistMembSn)  //'유저카드코드',
+//       .frstRegistDt(frstRegistDt)  //'유저카드코드',
+//       .lastRegistDt(lastRegistDt)  //'유저카드코드',
+//       .useYn(useYn)  //'유저카드코드',
 //       .build();
 //    }
+    
 
+    
+    public static MemberDTO toDto(Member member) {
+        return MemberDTO.builder()
+                .membSn(member.getMembSn())
+                .membCls(member.getMembCls())
+                .membStatusCd(member.getMembStatusCd())
+                .membId(member.getMembId())
+                .membPwd(member.getMembPwd())
+                .membNm(member.getMembNm())
+                .mobileNo(member.getMobileNo())
+                .zipCd(member.getMembPwd())
+                .zipAddr(member.getZipAddr())
+                .detailAddr(member.getDetailAddr())
+                .lastLoginDtm(member.getLastLoginDtm())
+                .membMoney(member.getMembMoney())
+                .frstRegistMembSn(member.getFrstRegistMembSn())
+                .lastRegistMembSn(member.getLastRegistMembSn())
+                .frstRegistDt(member.getFrstRegistDt())
+                .lastRegistDt(member.getLastRegistDt())
+                .useYn(member.getUseYn())
+                .build();
+    }
+    
+   @Builder
+   public MemberDTO(   
+         Long membSn, MembCls membCls,String membStatusCd, String membId
+         , String membPwd ,String membNm ,String mobileNo, String zipCd, String zipAddr
+         , String detailAddr, String lastLoginDtm,
+         MembMoney  membMoney, Long frstRegistMembSn , Long lastRegistMembSn        
+         , Timestamp frstRegistDt , Timestamp lastRegistDt , String useYn) {
+       
+       this.membSn = membSn;
+        this.membCls =membCls;
+        this.membStatusCd =membStatusCd ;
+        this.membId =membId ;
+        this.membPwd =membPwd; 
+        this.membNm =membNm; 
+        this.mobileNo = mobileNo;
+        this.zipCd =zipCd ; 
+        this.zipAddr =zipAddr;
+        this.detailAddr =detailAddr;
+        this.lastLoginDtm =lastLoginDtm;
+        this.membMoney =membMoney ;
+        this.frstRegistMembSn =frstRegistMembSn ;
+        this.lastRegistMembSn =lastRegistMembSn ;
+        this.frstRegistDt =frstRegistDt ;
+        this.lastRegistDt =lastRegistDt;
+        this.useYn = useYn;
+    }
+    // 아이디와 비밀번호가 일치하는지 검증하는 로직
+    public UsernamePasswordAuthenticationToken toAuthentication() {
+        return new UsernamePasswordAuthenticationToken(membId, membPwd);
+    }
 }
