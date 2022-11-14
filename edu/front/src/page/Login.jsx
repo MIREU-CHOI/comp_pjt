@@ -93,6 +93,30 @@ function Login() {
     //     setNotAllow(true);
     // }, [idValid, pwValid]);
 
+    const onLoginHandler = (event) => {
+        event.preventDefault();
+        console.log('로그인 버튼 click!');
+        let body = {
+            membId: id,
+            membPwd: pw
+        }
+        const data = JSON.stringify(body);
+
+        axios.post("http://localhost:8888/auth/login", data, {
+        headers: {
+            "Content-Type": "application/json",
+        }
+        })
+        // .then(res => res.json())  // axios 는 따로 json 변환할 필요 없음!
+        .then(res => {
+        // console.log('typeof(res) =>', typeof(res));
+        // console.log('typeof(resjson()) =>', typeof(res.json()));
+            console.log('res.data => ',res.data);
+            localStorage.setItem('accessToken', res.data.accessToken);
+            console.log('localStorage => ',localStorage.getItem("accessToken"));
+            navigate("/charge")
+        })
+    }
 
 
     return (
@@ -138,7 +162,8 @@ function Login() {
             </div>
 
             <div>
-                <button onClick={onClickConfirmButton}  className="loginButton">Login</button>
+                {/* <button onClick={onClickConfirmButton}  className="loginButton">Login</button> */}
+                <button onClick={onLoginHandler}  className="loginButton">Login</button>
             </div>
             <div>
                 <button onClick={register}  className="login_registerButton">회원가입</button>

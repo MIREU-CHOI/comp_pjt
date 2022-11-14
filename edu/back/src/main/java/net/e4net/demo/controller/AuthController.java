@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.e4net.demo.dto.MemberDTO;
 import net.e4net.demo.dto.MemberDTO;
-import net.e4net.demo.dto.TokenDto;
+import net.e4net.demo.dto.TokenDTO;
 import net.e4net.demo.service.AuthService;
 
 @RestController
@@ -28,7 +28,7 @@ public class AuthController {
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<TokenDto> login(@RequestBody MemberDTO requestDto) {
+    public ResponseEntity<TokenDTO> login(@RequestBody MemberDTO requestDto) {
     	log.info("AuthController Layer :: Call login Method!");
         return ResponseEntity.ok(authService.login(requestDto));
     }

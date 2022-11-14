@@ -24,7 +24,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import net.e4net.demo.dto.TokenDto;
+import net.e4net.demo.dto.TokenDTO;
 
 @Slf4j
 @Component
@@ -40,14 +40,13 @@ public class TokenProvider {
     }
 
     // 토큰 생성
-    public TokenDto generateTokenDto(Authentication authentication) {
+    public TokenDTO generateTokenDto(Authentication authentication) {
 
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         long now = (new Date()).getTime();
-
 
         Date tokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
 
@@ -60,7 +59,7 @@ public class TokenProvider {
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
-        return TokenDto.builder()
+        return TokenDTO.builder()
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
                 .tokenExpiresIn(tokenExpiresIn.getTime())

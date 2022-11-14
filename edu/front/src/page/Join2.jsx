@@ -21,6 +21,7 @@ function Join2(props) {
     const [UserCerNum, setUserCerNum] = useState("");
     const [ResCerNum, setResCerNum] = useState(0);
     const [phoneChkVal, setPhoneChkVal] = useState(false);
+    const [idChkVal, setIdChkVal] = useState(false);
 
     const onUserCerNumHandler = (event) => {
         setUserCerNum(event.currentTarget.value);
@@ -72,6 +73,7 @@ function Join2(props) {
         setName(event.currentTarget.value);
     }
 
+    // =============== 회원가입 - 중복확인 버튼 ===============
     const onIdChkHandler = (event) => {
         event.preventDefault();
         console.log('중복확인 버튼 click!');
@@ -91,16 +93,16 @@ function Join2(props) {
                 alert("이미 존재하는 ID 입니다.")                     
             } else{
                 alert("사용 가능한 ID 입니다.")
+                setIdChkVal(true);
         }})
 
     }
 
+    
+    // =============== 회원가입 버튼 ===============
     const onSubmitHandler = (event) => {
         event.preventDefault();
         console.log('회원가입 버튼 click!');
-        // if(Password !== ConfirmPassword){
-        //     return alert('비밀번호와 비밀번호 확인이 같지 않습니다.')
-        // }
 
         let body = {
             membId: Id,
@@ -114,23 +116,34 @@ function Join2(props) {
             detailAddr: DetailAddr
         }
         const data = JSON.stringify(body);
-
-        ///////////////////////////////////////////////
-        axios.post("http://localhost:8888/member/join", data, {
-        headers: {
-            "Content-Type": "application/json",
-            }
-        }).then((res) => {
-            console.log(res.data);
-            if(ConfirmPassword !== Password) {
-                alert("비밀번호와 비밀번호 확인이 일치하지 않습니다")                     
-            } else{
-                alert("회원가입 완료")
-                navigate("/charge")
-        }})
+        if(idChkVal == false){
+            alert("아이디 중복 확인을 해주세요")   
+            return;
+        }
+        if (phoneChkVal == false){
+            alert("휴대폰 번호 인증 확인을 해주세요")   
+            return;
+        }
+        if(idChkVal == true || phoneChkVal == true){
+            console.log('idChkVal => ', idChkVal);
+            console.log('phoneChkVal => ', phoneChkVal);
+            axios.post("http://localhost:8888/auth/signup", data, {
+            headers: {
+                "Content-Type": "application/json",
+                }
+            }).then((res) => {
+                console.log(res.data);
+                if(ConfirmPassword !== Password) {
+                    alert("비밀번호와 비밀번호 확인이 일치하지 않습니다")                     
+                } else{
+                    alert("회원가입 완료")
+                    navigate("/charge")
+            }})
+            
+        }
     }
 
-    // ----------- coolsms ---------------------------------------------------
+    // =============== coolsms 휴대폰번호 인증번호 "전송" 버튼 ===============
     const onCerNumSendHandler = (event) => {
         event.preventDefault();
         console.log('인증번호 전송 버튼 click!');
@@ -160,6 +173,7 @@ function Join2(props) {
         })
     }
 
+    // =============== coolsms 휴대폰번호 인증번호 "확인" 버튼 ===============
     const onCerNumChkHandler = (event) => {
         event.preventDefault();
         console.log('인증번호 확!인! 버튼 click!');
@@ -225,7 +239,6 @@ function Join2(props) {
         console.log(error.response.data);
     });
     */
-    // ----------- coolsms ---------------------------------------------------
     
 
     return (

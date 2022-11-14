@@ -31,76 +31,71 @@ import net.e4net.demo.service.MemberService;
 @CrossOrigin
 @Slf4j
 public class MemberController {
-	
+
 	private final MemberService memberService;
 	private final CertificationService certificationService;
-	
-	// ================= 221109 ===============================
-	@PostMapping("/member/join")
-    public ResponseEntity<MemberDTO> join(@RequestBody MemberDTO dto) {
-		log.info("MemberController Layer :: Call join Method!");
-        System.out.println("MembId => "+dto.getMembId());
-        Long membSn = memberService.join(dto);
-        System.out.println("가입완료 membSn => " + membSn);
-        return new ResponseEntity<MemberDTO>(dto, HttpStatus.OK);
-    }
-	
+
+
 	// 회원가입 시 아이디 중복 체크
 	@GetMapping("/member/exists/{membId}")
-	public ResponseEntity<Boolean> checkMembIdDuplicate(@PathVariable("membId") String membId){
-		System.out.println("membId => "+membId);
+	public ResponseEntity<Boolean> checkMembIdDuplicate(@PathVariable("membId") String membId) {
+		System.out.println("membId => " + membId);
 		log.info("MemberController Layer :: Call checkMembIdDuplicate Method!");
-	    if(memberService.checkMembIdDuplicate(membId)) {
-	    	return ResponseEntity.status(HttpStatus.OK).body(false);
-	    }
-	    return ResponseEntity.status(HttpStatus.OK).body(true);
+		if (memberService.checkMembIdDuplicate(membId)) {
+			return ResponseEntity.status(HttpStatus.OK).body(false);
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(true);
 //		return ResponseEntity.ok(memberService.checkMembIdDuplicate(membId));
 	}
-	
+
 	@GetMapping("/check/sendSMS/{mobileNo}")
-    public ResponseEntity<String> sendSMS(@PathVariable("mobileNo") String mobileNo) {
-        System.out.println("수신자 번호 : " + mobileNo);
-        String cerNum = certificationService.certifiedPhoneNumber(mobileNo);
-        System.out.println("인증번호 : " + cerNum);
-        return ResponseEntity.status(HttpStatus.OK).body(cerNum);
-    }
+	public ResponseEntity<String> sendSMS(@PathVariable("mobileNo") String mobileNo) {
+		System.out.println("수신자 번호 : " + mobileNo);
+//        String cerNum = certificationService.certifiedPhoneNumber(mobileNo);
+		String cerNum = "1004";
+		System.out.println("인증번호 : " + cerNum);
+		return ResponseEntity.status(HttpStatus.OK).body(cerNum);
+	}
 	
-	// ------- 221111 security login & join --------------------
-	
-	// 우편번호 
+	// =============== 221111 security login & join ===============
+	// 우편번호
 	@GetMapping("/member/me")
-    public ResponseEntity<MemberDTO> getMyMemberInfo() {
+	public ResponseEntity<MemberDTO> getMyMemberInfo() {
 		MemberDTO myInfoBySecurity = memberService.getMyInfoBySecurity();
-        System.out.println(myInfoBySecurity.getZipCd());
-        return ResponseEntity.ok((myInfoBySecurity));
-        // return ResponseEntity.ok(memberService.getMyInfoBySecurity());
-    }
+		System.out.println(myInfoBySecurity.getZipCd());
+		return ResponseEntity.ok((myInfoBySecurity));
+		// return ResponseEntity.ok(memberService.getMyInfoBySecurity());
+	}
 
-    @PostMapping("/member/nickname")
-    public ResponseEntity<MemberDTO> setMembZipCd(@RequestBody MemberDTO request) {
-        return ResponseEntity.ok(memberService.changeMemberZipCd(request.getMembId(), request.getMembPwd()));
-    }
+	@PostMapping("/member/nickname")
+	public ResponseEntity<MemberDTO> setMembZipCd(@RequestBody MemberDTO request) {
+		return ResponseEntity.ok(memberService.changeMemberZipCd(request.getMembId(), request.getMembPwd()));
+	}
 
-    @PostMapping("/member/password")
-    public ResponseEntity<MemberDTO> setMembPwd(@RequestBody ChangePasswordRequestDTO request) {
-        return ResponseEntity.ok(
-        		memberService.changeMembPwd(
-        				request.getMembId(), 
-        				request.getExMembPwd(), 
-        				request.getNewMembPwd()));
-    }
-	
-	
-	
-	
-    // --------------------------------------------------------------------
-	
-	
-	
+	@PostMapping("/member/password")
+	public ResponseEntity<MemberDTO> setMembPwd(@RequestBody ChangePasswordRequestDTO request) {
+		return ResponseEntity
+				.ok(memberService.changeMembPwd(request.getMembId(), request.getExMembPwd(), request.getNewMembPwd()));
+	}
+
+
+	// AuthController 의 signup 과 join 메소드로 처리함
+	// ================= 221109 ===============================
+//	@PostMapping("/member/join")
+	@PostMapping("/member/join")
+	public ResponseEntity<MemberDTO> join(@RequestBody MemberDTO dto) {
+		log.info("MemberController Layer :: Call join Method!");
+		System.out.println("MembId => " + dto.getMembId());
+		Long membSn = memberService.join(dto);
+		System.out.println("가입완료 membSn => " + membSn);
+		return new ResponseEntity<MemberDTO>(dto, HttpStatus.OK);
+	}
+
+
 	// ================= 221108 ===============================
 //	@RequestMapping("/member/insert")
 //	public MemberDTO insertMember(@RequestParam String member) {
-	//return memberService.insertMember(member);
+	// return memberService.insertMember(member);
 //		log.info("\n{}(아/야), 안녕!", member);
 //		System.out.println("!!!!!!!!!!!!!!!!!!!!!");
 //		return null;
@@ -126,8 +121,7 @@ public class MemberController {
 //        return "login";
 //    }
 	// ======================================================
-    
-	
+
 //	
 //	public List<MemberDTO> getAllMembers(){
 //		return memberService.getAllMembers();
@@ -144,8 +138,7 @@ public class MemberController {
 //	public void deleteMember(String membId) {
 //		memberService.deleteMember(membId);
 //	}
-	
-	
+
 	///////////////// 교육 실습 ///////////////
 //	@PostMapping("/member/new")
 //	public void add(@RequestBody Member member) {

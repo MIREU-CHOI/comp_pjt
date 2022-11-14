@@ -51,6 +51,14 @@ public class MembMoney extends CommonData{
 		this.moneySn = moneySn;
 		this.member = member;
 		this.moneyBlce = moneyBlce;
+		this.member.setMembMoney(this);
+	}
+	
+	// 무조건 이 빌드패턴을 이용해야만 하도록 함 
+	public static MembMoney createMembMoney(Member member) {
+		return MembMoney.builder()
+				.member(member)
+				.build();
 	}
 	
 	// 교육 
@@ -64,12 +72,6 @@ public class MembMoney extends CommonData{
 	
 	
 	
-	// 무조건 이 빌드패턴을 이용해야만 하도록 함 
-//	public static MembMoney createMembMoney(Member member) {
-//		return MembMoney.builder()
-//				.member(member)
-//				.build();
-//	}
 
 
 

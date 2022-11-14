@@ -10,9 +10,11 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.e4net.demo.dto.MembMoneyDTO;
 import net.e4net.demo.dto.MemberDTO;
 import net.e4net.demo.dto.MemberDTO;
-import net.e4net.demo.dto.TokenDto;
+import net.e4net.demo.dto.TokenDTO;
+import net.e4net.demo.entity.MembMoney;
 import net.e4net.demo.entity.Member;
 import net.e4net.demo.jwt.TokenProvider;
 import net.e4net.demo.repository.MemberRepository;
@@ -34,10 +36,13 @@ public class AuthService {
         }
         System.out.println("가입하자!");
         Member member = requestDto.toEntity(passwordEncoder);
-        return MemberDTO.toDto(memberRepository.save(member));
+        MemberDTO dto = MemberDTO.toDto(memberRepository.save(member));
+        MembMoney.createMembMoney(member);
+        
+        return dto;
     }
 
-    public TokenDto login(MemberDTO requestDto) {
+    public TokenDTO login(MemberDTO requestDto) {
     	log.info("AuthService Layer :: Call login Method!");
         UsernamePasswordAuthenticationToken authenticationToken = requestDto.toAuthentication();
 

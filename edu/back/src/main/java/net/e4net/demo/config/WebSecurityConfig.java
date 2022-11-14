@@ -48,12 +48,19 @@ public class WebSecurityConfig {
                 .and()
                 .authorizeRequests()
                 // 로그인한 유저만 id중복체크 기능을 할 수 있도록 테스트
-                .antMatchers("/member/exists/**").hasRole("USER")
-                .antMatchers("/goods/new").hasRole("USER")
+//                .antMatchers("/member/exists/**").hasRole("USER")
+//                .antMatchers("/goods/new").hasRole("USER")
                 .antMatchers("/**","/").permitAll()
                 .antMatchers("/auth/**").permitAll()
+                .antMatchers("/member/**").permitAll()
                 .antMatchers("/user/**").permitAll()
+                .antMatchers("/auth/login").permitAll()
+//                .antMatchers("/goods/finall").hasRole("USER")
+//                .antMatchers("/goods/**").hasRole("seller")
                 .anyRequest().authenticated()
+                // 1. 로그인할 때 세션스토리지에 토큰 저장
+                // 2. 권한 필요한 기능들 프론트에서 axios 호출할 때 세션에 저장한 토큰 헤더에 심기 
+                // 3. WebSecurityConfig.java(여기)에 권한 설정  .antMatchers("/member/exists/**").hasRole("USER")
 
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider));
