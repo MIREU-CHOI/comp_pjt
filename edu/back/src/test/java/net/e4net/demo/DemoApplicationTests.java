@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import net.e4net.demo.entity.MembMoney;
+import net.e4net.demo.entity.Money;
 import net.e4net.demo.entity.Member;
 import net.e4net.demo.entity.MembCls;
 import net.e4net.demo.repository.MemberRepository;

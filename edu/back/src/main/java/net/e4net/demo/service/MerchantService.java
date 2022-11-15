@@ -15,7 +15,7 @@ import net.e4net.demo.dto.GoodsDTO;
 import net.e4net.demo.dto.MemberDTO;
 import net.e4net.demo.dto.MerchantDTO;
 import net.e4net.demo.entity.Goods;
-import net.e4net.demo.entity.MembMoney;
+import net.e4net.demo.entity.Money;
 import net.e4net.demo.entity.Member;
 import net.e4net.demo.entity.Merchant;
 import net.e4net.demo.repository.GoodsRepository;

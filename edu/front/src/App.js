@@ -11,6 +11,7 @@ import Pay from './page/Pay';
 import History from './page/History';
 import Example from './Example';
 import List from './page/List';
+import Payment from './page/Payment';
 
 
 function App() {
@@ -22,7 +23,8 @@ function App() {
         <Route path="/charge" element={<Charge/>}/>
         <Route path="/pay" element={<Pay/>}/>
         <Route path="/history" element={<History/>}/>
-        <Route path="/List" element={<List />}/>
+        <Route path="/list" element={<List />}/>
+        <Route path="/payment" element={<Payment />}/>
 
       </Routes>
       {/* <Login /> */}

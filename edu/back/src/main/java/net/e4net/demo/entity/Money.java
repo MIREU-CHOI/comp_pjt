@@ -29,7 +29,7 @@ import lombok.NoArgsConstructor;
 		initialValue = 1,
 		allocationSize = 1)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MembMoney extends CommonData{
+public class Money extends CommonData{
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MONEY_SEQ_GENERATOR")
 	@Column(name = "MONEY_SN", length = 10)
@@ -37,7 +37,7 @@ public class MembMoney extends CommonData{
 	
 	@OneToOne   // join 할 때 서로를 참조해야 하니까
 //	@JoinColumn  :  외래키를 정의하는 어노테이션 
-	@JoinColumn(name = "MEMB_SN", referencedColumnName = "MEMB_SN", updatable = false, insertable = false)
+	@JoinColumn(name = "MEMB_SN", referencedColumnName = "MEMB_SN")
 	private Member member;
 	
 	@Column(name = "MONEY_BLCE", length = 15)
@@ -45,7 +45,7 @@ public class MembMoney extends CommonData{
 	
 	// 미르 
 	@Builder
-	private MembMoney(String useYn, Long frstRegistMembSn, Timestamp frstRegistDt, Long lastRegistMembSn,
+	private Money(String useYn, Long frstRegistMembSn, Timestamp frstRegistDt, Long lastRegistMembSn,
 			Timestamp lastRegistDt, Long moneySn, Member member, Long moneyBlce) {
 		super(useYn, frstRegistMembSn, frstRegistDt, lastRegistMembSn, lastRegistDt);
 		this.moneySn = moneySn;
@@ -55,8 +55,8 @@ public class MembMoney extends CommonData{
 	}
 	
 	// 무조건 이 빌드패턴을 이용해야만 하도록 함 
-	public static MembMoney createMembMoney(Member member) {
-		return MembMoney.builder()
+	public static Money createMembMoney(Member member) {
+		return Money.builder()
 				.member(member)
 				.build();
 	}

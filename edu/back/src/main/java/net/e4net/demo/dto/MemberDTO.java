@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import net.e4net.demo.entity.MembCls;
-import net.e4net.demo.entity.MembMoney;
+import net.e4net.demo.entity.Money;
 import net.e4net.demo.entity.Member;
 
 //@Getter @Setter
@@ -29,7 +29,7 @@ public class MemberDTO {
 	private String zipAddr;		// 우편번호주소
 	private String detailAddr;	// 상세주소
 	private String lastLoginDtm;// 최종 로그인 일시
-	private MembMoney membMoney;// 회원 머니 entity
+	private Money membMoney;// 회원 머니 entity
 	private String useYn;
 	private Long frstRegistMembSn;
 	private Timestamp frstRegistDt;
@@ -107,7 +107,7 @@ public class MemberDTO {
          Long membSn, MembCls membCls,String membStatusCd, String membId
          , String membPwd ,String membNm ,String mobileNo, String zipCd, String zipAddr
          , String detailAddr, String lastLoginDtm,
-         MembMoney  membMoney, Long frstRegistMembSn , Long lastRegistMembSn        
+         Money  membMoney, Long frstRegistMembSn , Long lastRegistMembSn        
          , Timestamp frstRegistDt , Timestamp lastRegistDt , String useYn) {
        
        this.membSn = membSn;

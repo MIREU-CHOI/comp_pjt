@@ -14,7 +14,7 @@ import net.e4net.demo.dto.MembMoneyDTO;
 import net.e4net.demo.dto.MemberDTO;
 import net.e4net.demo.dto.MemberDTO;
 import net.e4net.demo.dto.TokenDTO;
-import net.e4net.demo.entity.MembMoney;
+import net.e4net.demo.entity.Money;
 import net.e4net.demo.entity.Member;
 import net.e4net.demo.jwt.TokenProvider;
 import net.e4net.demo.repository.MemberRepository;
@@ -36,8 +36,10 @@ public class AuthService {
         }
         System.out.println("가입하자!");
         Member member = requestDto.toEntity(passwordEncoder);
+      // 굳이 다시 MemberDTO 에 저장할 필요 없는것 같지만.. 
+      // 정보 get할 수도 있으니 그냥 했다!
         MemberDTO dto = MemberDTO.toDto(memberRepository.save(member));
-        MembMoney.createMembMoney(member);
+        Money.createMembMoney(member);
         
         return dto;
     }

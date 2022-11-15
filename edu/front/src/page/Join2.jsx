@@ -117,11 +117,11 @@ function Join2(props) {
         }
         const data = JSON.stringify(body);
         if(idChkVal == false){
-            alert("아이디 중복 확인을 해주세요")   
+            alert("아이디 중복 확인을 해주세요");
             return;
         }
         if (phoneChkVal == false){
-            alert("휴대폰 번호 인증 확인을 해주세요")   
+            alert("휴대폰 번호 인증 확인을 해주세요");
             return;
         }
         if(idChkVal == true || phoneChkVal == true){

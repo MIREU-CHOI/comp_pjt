@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.e4net.demo.entity.MembCls;
-import net.e4net.demo.entity.MembMoney;
+import net.e4net.demo.entity.Money;
 import net.e4net.demo.entity.Member;
 
 @Getter
@@ -30,7 +30,7 @@ public class MemberResponseDTO { // Response를 보낼때 쓰이는 dto
 	private String zipAddr;		// 우편번호주소
 	private String detailAddr;	// 상세주소
 	private String lastLoginDtm;// 최종 로그인 일시
-	private MembMoney membMoney;// 회원 머니 entity
+	private Money membMoney;// 회원 머니 entity
 
 //    public static MemberResponseDTO of(Member member) {
 //        return MemberResponseDTO.builder()

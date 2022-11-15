@@ -21,8 +21,10 @@ import lombok.extern.slf4j.Slf4j;
 import net.e4net.demo.dto.ChangePasswordRequestDTO;
 import net.e4net.demo.dto.MemberDTO;
 import net.e4net.demo.dto.MemberRequestDTO;
+import net.e4net.demo.dto.MoneyTransferHstDTO;
 import net.e4net.demo.dto.MemberDTO;
 import net.e4net.demo.entity.Member;
+import net.e4net.demo.entity.MoneyTransferHst;
 import net.e4net.demo.service.CertificationService;
 import net.e4net.demo.service.MemberService;
 
@@ -35,7 +37,28 @@ public class MemberController {
 	private final MemberService memberService;
 	private final CertificationService certificationService;
 
+	// 휴대폰번호 인증 coolSMS 221110
+	@GetMapping("/check/sendSMS/{mobileNo}")
+	public ResponseEntity<String> sendSMS(@PathVariable("mobileNo") String mobileNo) {
+		System.out.println("수신자 번호 : " + mobileNo);
+//        String cerNum = certificationService.certifiedPhoneNumber(mobileNo);
+		String cerNum = "1004";
+		System.out.println("인증번호 : " + cerNum);
+		return ResponseEntity.status(HttpStatus.OK).body(cerNum);
+	}
+	
+	// 머니 충전 221115
+	@PostMapping("/member/charge")
+	public ResponseEntity<MoneyTransferHstDTO> chargeMoney(MoneyTransferHstDTO dto) {
+		log.info("MemberController Layer :: Call chargeMoney Method!");
+		memberService.chargeMoney(dto);
+		return ResponseEntity.status(HttpStatus.OK).body(dto);
+	}
+	
+	
+	
 
+	// ====================== 아래는 사용 안함 ==================================
 	// 회원가입 시 아이디 중복 체크
 	@GetMapping("/member/exists/{membId}")
 	public ResponseEntity<Boolean> checkMembIdDuplicate(@PathVariable("membId") String membId) {
@@ -48,16 +71,8 @@ public class MemberController {
 //		return ResponseEntity.ok(memberService.checkMembIdDuplicate(membId));
 	}
 
-	@GetMapping("/check/sendSMS/{mobileNo}")
-	public ResponseEntity<String> sendSMS(@PathVariable("mobileNo") String mobileNo) {
-		System.out.println("수신자 번호 : " + mobileNo);
-//        String cerNum = certificationService.certifiedPhoneNumber(mobileNo);
-		String cerNum = "1004";
-		System.out.println("인증번호 : " + cerNum);
-		return ResponseEntity.status(HttpStatus.OK).body(cerNum);
-	}
 	
-	// =============== 221111 security login & join ===============
+	// -------------- 221111 security login & join --------------
 	// 우편번호
 	@GetMapping("/member/me")
 	public ResponseEntity<MemberDTO> getMyMemberInfo() {
@@ -80,8 +95,7 @@ public class MemberController {
 
 
 	// AuthController 의 signup 과 join 메소드로 처리함
-	// ================= 221109 ===============================
-//	@PostMapping("/member/join")
+	// -------------- 221109 --------------
 	@PostMapping("/member/join")
 	public ResponseEntity<MemberDTO> join(@RequestBody MemberDTO dto) {
 		log.info("MemberController Layer :: Call join Method!");
@@ -92,7 +106,7 @@ public class MemberController {
 	}
 
 
-	// ================= 221108 ===============================
+	// -------------- 221108 --------------
 //	@RequestMapping("/member/insert")
 //	public MemberDTO insertMember(@RequestParam String member) {
 	// return memberService.insertMember(member);

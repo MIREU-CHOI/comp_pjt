@@ -82,7 +82,7 @@ public class Member extends CommonData{
 
 	// mappedBy = "member"  :  
 	@OneToOne(mappedBy = "member", cascade = CascadeType.PERSIST) // 엔티티 생성될 때 영향을 주겠다? 
-	private MembMoney membMoney;
+	private Money membMoney;
 	
 
 	// PWD 변경 시 setter
@@ -98,7 +98,7 @@ public class Member extends CommonData{
     public Member(String useYn, Long frstRegistMembSn, Timestamp frstRegistDt, Long lastRegistMembSn,
 			Timestamp lastRegistDt, Long membSn, MembCls membCls, String membStatusCd, String membId, String membPwd,
 			String membNm, String mobileNo, String emailAddr, String zipCd, String zipAddr, String detailAddr,
-			String lastLoginDtm, MembMoney membMoney) {
+			String lastLoginDtm, Money membMoney) {
 		super(useYn, frstRegistMembSn, frstRegistDt, lastRegistMembSn, lastRegistDt);
 		this.membSn = membSn;
 		this.membCls = membCls;
@@ -150,7 +150,7 @@ public class Member extends CommonData{
 //				.build();
 //	}
 	
-	public void setMembMoney(MembMoney membMoney) {
+	public void setMembMoney(Money membMoney) {
 		this.membMoney = membMoney;
 	}
 	

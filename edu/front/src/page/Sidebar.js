@@ -34,6 +34,10 @@ import {
               <NavLink exact to="/pay" activeClassName="activeClicked">
                 <CDBSidebarMenuItem icon="table">머니 결제</CDBSidebarMenuItem>
               </NavLink>
+              {/* 미르 테스트  */}
+              <NavLink exact to="/payment" activeClassName="activeClicked">
+                <CDBSidebarMenuItem icon="table">mr머니 결제</CDBSidebarMenuItem>
+              </NavLink>
               <NavLink exact to="/history" activeClassName="activeClicked">
                 <CDBSidebarMenuItem icon="user">거래 내역</CDBSidebarMenuItem>
               </NavLink>
