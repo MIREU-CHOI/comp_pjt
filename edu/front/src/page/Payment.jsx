@@ -38,7 +38,7 @@ const Payment = (effect, deps) => {
         const data = {
             pg: 'kakaopay',           // PG사 (필수항목)
             pay_method: 'card',           // 결제수단 (필수항목)
-            merchant_uid: `mid_${new Date().getTime()}`, // 결제금액 (필수항목)
+            merchant_uid: 'mid_${new Date().getTime()}', // 결제금액 (필수항목)
             name: '삼성 노트북 결제 테스트',           // 주문명 (필수항목)
             amount: '1000',               // 금액 (필수항목)
             custom_data: { name: '부가정보', desc: '세부 부가정보' },
@@ -69,7 +69,7 @@ const Payment = (effect, deps) => {
                 alert('결제 성공하였습니다.');
             })
         } else {
-        alert(`결제 실패하였습니다. : ${error_msg}`);
+            alert(`결제 실패하였습니다. : ${error_msg}`);
         }
     }
 
