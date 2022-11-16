@@ -31,24 +31,24 @@ public class MoneyTransferHst extends CommonData{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TRANSFER_HST_SEQ_GENERATOR")
-	@Column(name = "MONEY_TRANSFER_HST_SN", length = 10)
-	private Long moneyTransferHstSn;
+	@Column(name = "MONEY_TRANSFER_HST_SN")
+	private Long moneyTransferHstSn;// 머니거래이력일련번호 , length = 10
 	
 	@ManyToOne
-	@JoinColumn(name = "MEMB_SN", referencedColumnName = "MEMB_SN", updatable = false, insertable = false)
-	private Member member;
+	@JoinColumn(name = "MEMB_SN", referencedColumnName = "MEMB_SN")
+	private Member member;			// 회원번호
 	
-	@Column(name = "TRANSFER_TY_CD", length = 1, nullable = false)
-	private String transferTyCd;
+	@Column(name = "TRANSFER_TY_CD", nullable = false)
+	private String transferTyCd;	// 거래종류코드 (01:충전, 02:사용, 03:환전) , length = 2 
 	
-	@Column(name = "TRANSFER_AMT", length = 15, nullable = false)
-	private Long transferAmt;
+	@Column(name = "TRANSFER_AMT", nullable = false)
+	private Long transferAmt;		// 거래금액 , length = 15
 	
-	@Column(name = "PAY_MEAN_CD", length = 2)
-	private String payMeanCd;
+	@Column(name = "PAY_MEAN_CD")
+	private String payMeanCd;// 결제수단코드 - 충전 : 01:카드, 02:계좌이체, 03: 머니사용 , length = 2
 	
-	@Column(name = "PAY_TRANSFER_NO", length = 20)
-	private String payTranserNo;
+	@Column(name = "PAY_TRANSFER_NO")
+	private String payTranserNo;	// 결제거래번호 , length = 20
 
 	@Builder
 	private MoneyTransferHst(String useYn, Long frstRegistMembSn, Timestamp frstRegistDt, Long lastRegistMembSn,

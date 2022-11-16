@@ -4,6 +4,7 @@ import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +25,9 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import net.e4net.demo.dto.MemberDTO;
 import net.e4net.demo.dto.TokenDTO;
+import net.e4net.demo.entity.Member;
 
 @Slf4j
 @Component
@@ -40,7 +43,7 @@ public class TokenProvider {
     }
 
     // 토큰 생성
-    public TokenDTO generateTokenDto(Authentication authentication) {
+    public TokenDTO generateTokenDto(Authentication authentication , Optional<Member> member  ) {
 
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -62,6 +65,9 @@ public class TokenProvider {
         return TokenDTO.builder()
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
+                .membSn(member.get().getMembSn())
+                .membId(member.get().getMembId())
+                .membCls(member.get().getMembCls())
                 .tokenExpiresIn(tokenExpiresIn.getTime())
                 .build();
     }

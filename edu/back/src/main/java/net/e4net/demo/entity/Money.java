@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -33,15 +34,15 @@ public class Money extends CommonData{
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MONEY_SEQ_GENERATOR")
 	@Column(name = "MONEY_SN", length = 10)
-	private Long moneySn;
+	private Long moneySn;	// 회원머니 번호
 	
-	@OneToOne   // join 할 때 서로를 참조해야 하니까
+	@OneToOne(cascade = CascadeType.PERSIST)   // join 할 때 서로를 참조해야 하니까
 //	@JoinColumn  :  외래키를 정의하는 어노테이션 
 	@JoinColumn(name = "MEMB_SN", referencedColumnName = "MEMB_SN")
-	private Member member;
+	private Member member;	// 회원번호
 	
 	@Column(name = "MONEY_BLCE", length = 15)
-	private Long moneyBlce;
+	private Long moneyBlce;	// 머니잔고 
 	
 	// 미르 
 	@Builder
@@ -53,6 +54,14 @@ public class Money extends CommonData{
 		this.moneyBlce = moneyBlce;
 		this.member.setMembMoney(this);
 	}
+	
+	// default 값 넣어주기 
+	@PrePersist
+	public void setting() {
+		this.moneyBlce = 0l;
+	}
+	
+	
 	
 	// 무조건 이 빌드패턴을 이용해야만 하도록 함 
 	public static Money createMembMoney(Member member) {

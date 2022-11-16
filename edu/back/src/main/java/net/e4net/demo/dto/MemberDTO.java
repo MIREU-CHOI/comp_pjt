@@ -41,6 +41,8 @@ public class MemberDTO {
 		 
 	}
 	
+	
+	
 	/* DTO -> Entity */
     public Member toEntity(PasswordEncoder passwordEncoder) {
     	Member member = Member.builder()

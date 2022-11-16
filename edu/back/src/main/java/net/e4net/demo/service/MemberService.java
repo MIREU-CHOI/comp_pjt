@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.e4net.demo.config.SecurityUtil;
+import net.e4net.demo.dto.MoneyDTO;
 import net.e4net.demo.dto.MemberDTO;
 import net.e4net.demo.dto.MemberResponseDTO;
 import net.e4net.demo.dto.MoneyTransferHstDTO;
@@ -20,6 +21,7 @@ import net.e4net.demo.entity.Money;
 import net.e4net.demo.entity.MoneyTransferHst;
 import net.e4net.demo.entity.Member;
 import net.e4net.demo.repository.MemberRepository;
+import net.e4net.demo.repository.MoneyRepository;
 import net.e4net.demo.repository.MoneyTransferRepository;
 import net.nurigo.java_sdk.api.Message;
 import net.nurigo.java_sdk.exceptions.CoolsmsException;
@@ -30,6 +32,7 @@ import net.nurigo.java_sdk.exceptions.CoolsmsException;
 @RequiredArgsConstructor
 public class MemberService {
 	
+	private final MoneyRepository moneyRepository;
 	private final MoneyTransferRepository moneyTransferRepository;
 	private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
@@ -43,15 +46,41 @@ public class MemberService {
 	}
 	
 	// 머니 충전
-	public MoneyTransferHst chargeMoney(MoneyTransferHstDTO dto) {
-		log.info("MemberService Layer :: Call chargeMoney Method!");
+	public MoneyTransferHst insertMoneyTrans(MoneyTransferHstDTO dto) {
+		log.info("MemberService Layer :: Call insertMoneyTrans Method!");
+		Long membSn = dto.getMember().getMembSn();
+		Member member = Member.builder()
+							  .membSn(membSn)
+							  .build();
+		System.out.println(membSn);
+		dto.setMember(member);
+	
 		MoneyTransferHst entity = modelMapper.map(dto, MoneyTransferHst.class);
-//		Optional<Member> member = memberRepository.findById(dto.getMember().getMembSn());
 		
 		return moneyTransferRepository.save(entity);
 	}
-	
-	
+	// 머니 충전 시 회원머니 테이블 업데이트 
+	@Transactional
+	public Money updateMoney(Long membSn, Long amount){
+		log.info("MemberService Layer :: Call updateMoney Method!");
+		Long moneySn = membSn; 
+//		Money money = moneyRepository.findMoneyByMoneySn(moneySn);
+//		Long membSn = transDto.getMember().getMembSn();
+//		transDto.getMember().get
+//		Optional<Money> money = moneyRepository.findById(moneySn);
+		Money money = moneyRepository.findByMoneySn(moneySn);
+		Long balance = money.getMoneyBlce();
+		System.out.println("balance => "+balance);
+		Member member = Member.builder()
+							  .membSn(membSn)
+							  .build();
+		MoneyDTO moneyDto = MoneyDTO.builder()
+									.moneyBlce(balance+amount)
+									.moneySn(membSn)
+									.member(member).build();
+		Money money2 = modelMapper.map(moneyDto, Money.class);
+		return moneyRepository.save(money2);
+	}
 	
 	
 	

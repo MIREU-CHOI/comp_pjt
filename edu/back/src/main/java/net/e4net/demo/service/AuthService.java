@@ -1,5 +1,7 @@
 package net.e4net.demo.service;
 
+import java.util.Optional;
+
 import javax.transaction.Transactional;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.e4net.demo.dto.MembMoneyDTO;
+import net.e4net.demo.dto.MoneyDTO;
 import net.e4net.demo.dto.MemberDTO;
 import net.e4net.demo.dto.MemberDTO;
 import net.e4net.demo.dto.TokenDTO;
@@ -49,8 +51,8 @@ public class AuthService {
         UsernamePasswordAuthenticationToken authenticationToken = requestDto.toAuthentication();
 
         Authentication authentication = managerBuilder.getObject().authenticate(authenticationToken);
-
-        return tokenProvider.generateTokenDto(authentication);
+        Optional<Member> member = memberRepository.findByMembId(requestDto.getMembId());
+        return tokenProvider.generateTokenDto(authentication, member);
     }
 
 }

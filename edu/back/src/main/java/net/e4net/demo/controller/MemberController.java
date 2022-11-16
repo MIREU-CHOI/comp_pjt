@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.e4net.demo.dto.ChangePasswordRequestDTO;
 import net.e4net.demo.dto.MemberDTO;
 import net.e4net.demo.dto.MemberRequestDTO;
+import net.e4net.demo.dto.MoneyDTO;
 import net.e4net.demo.dto.MoneyTransferHstDTO;
 import net.e4net.demo.dto.MemberDTO;
 import net.e4net.demo.entity.Member;
@@ -36,10 +37,12 @@ public class MemberController {
 
 	private final MemberService memberService;
 	private final CertificationService certificationService;
+	
 
 	// 휴대폰번호 인증 coolSMS 221110
 	@GetMapping("/check/sendSMS/{mobileNo}")
 	public ResponseEntity<String> sendSMS(@PathVariable("mobileNo") String mobileNo) {
+		log.info("수신자 번호 : {}", mobileNo);
 		System.out.println("수신자 번호 : " + mobileNo);
 //        String cerNum = certificationService.certifiedPhoneNumber(mobileNo);
 		String cerNum = "1004";
@@ -49,10 +52,14 @@ public class MemberController {
 	
 	// 머니 충전 221115
 	@PostMapping("/member/charge")
-	public ResponseEntity<MoneyTransferHstDTO> chargeMoney(MoneyTransferHstDTO dto) {
-		log.info("MemberController Layer :: Call chargeMoney Method!");
-		memberService.chargeMoney(dto);
-		return ResponseEntity.status(HttpStatus.OK).body(dto);
+	public ResponseEntity<MoneyTransferHstDTO> chargeMoney(@RequestBody MoneyTransferHstDTO transDto) {
+		System.out.println("getTransferAmt => "+transDto.getTransferAmt());
+		Long membSn = transDto.getMember().getMembSn();
+		Long amount = transDto.getTransferAmt();
+		log.info("MemberController Layer :: chargeMoney membSn:{}",membSn);
+		memberService.insertMoneyTrans(transDto);
+		memberService.updateMoney(membSn, amount);
+		return ResponseEntity.status(HttpStatus.OK).body(transDto);
 	}
 	
 	

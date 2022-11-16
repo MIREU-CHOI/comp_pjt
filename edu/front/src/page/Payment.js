@@ -40,7 +40,7 @@ const Payment = (effect, deps) => {
             pay_method: 'card',           // 결제수단 (필수항목)
             merchant_uid: `mid_${new Date().getTime()}`, // 결제금액 (필수항목)
             name: 'E4. 노트북 결제 테스트',           // 주문명 (필수항목)
-            amount: '1000',               // 금액 (필수항목)
+            amount: money,               // 금액 (필수항목)
             custom_data: { name: '부가정보', desc: '세부 부가정보' },
             buyer_name: "홍길동",          // 구매자 이름
             buyer_tel: '01012341234',       // 구매자 전화번호 (필수항목)
