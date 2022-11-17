@@ -30,10 +30,23 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	List<Member> findByName(@Param("name") String name);
 	
 	boolean existsByMobileNo(String mobileNo);
+	
+	
+	
+	
+	
+	
 
 //	Member findOne(Long membId); // 이게 맞나..?
 
-	// db 연동하는 코드 ... JPA 나중에 =======================
+	
+	
+	
+	
+	
+	
+	// =============================================================
+	// db 연동하는 코드 ... JPA 나중에 
 //	static public ArrayList<MemberDTO> members;
 //	
 //	static {
@@ -49,7 +62,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 //	public List<MemberDTO> getAllMembers(){
 //		return members;
 //	}
-//	
+//	// Member 한 명 조회 
 //	public MemberDTO getMemberByMemId(String membId) {
 //		return members.stream()
 //				.filter(memberDTO -> memberDTO.getMembId().equals(membId))

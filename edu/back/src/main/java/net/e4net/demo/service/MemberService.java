@@ -47,7 +47,7 @@ public class MemberService {
 	
 	// 머니 충전
 	public MoneyTransferHst insertMoneyTrans(MoneyTransferHstDTO dto) {
-		log.info("MemberService Layer :: Call insertMoneyTrans Method!");
+		log.info("MemberService :: Call insertMoneyTrans Method!");
 		Long membSn = dto.getMember().getMembSn();
 		Member member = Member.builder()
 							  .membSn(membSn)
@@ -62,24 +62,35 @@ public class MemberService {
 	// 머니 충전 시 회원머니 테이블 업데이트 
 	@Transactional
 	public Money updateMoney(Long membSn, Long amount){
-		log.info("MemberService Layer :: Call updateMoney Method!");
-		Long moneySn = membSn; 
+		log.info("MemberService :: Call updateMoney Method!");
+//		Long moneySn = membSn; 
 //		Money money = moneyRepository.findMoneyByMoneySn(moneySn);
 //		Long membSn = transDto.getMember().getMembSn();
 //		transDto.getMember().get
 //		Optional<Money> money = moneyRepository.findById(moneySn);
-		Money money = moneyRepository.findByMoneySn(moneySn);
-		Long balance = money.getMoneyBlce();
+		Money money = moneyRepository.findByMoneySn(membSn);
+		Long balance = money.getMoneyBlce(); // 기존 잔고
 		System.out.println("balance => "+balance);
 		Member member = Member.builder()
 							  .membSn(membSn)
 							  .build();
 		MoneyDTO moneyDto = MoneyDTO.builder()
-									.moneyBlce(balance+amount)
+									.moneyBlce(balance+amount) // 기존 잔고 + 충전액
 									.moneySn(membSn)
 									.member(member).build();
 		Money money2 = modelMapper.map(moneyDto, Money.class);
 		return moneyRepository.save(money2);
+	}
+	
+	// 회원 머니 조회
+	// * 서비스는 컨트롤러에서 dto 를 받아오고 entity 변환해서 디비 처리한 후
+	//   처리한 결과에 따라 다시 dto로 변환해서 컨트롤러에게 dto로 주면 된다!
+	public MoneyDTO selectMoney(Long moneySn) {
+		log.info("MemberService :: selectMoney sn=>{}",moneySn);
+		Money money = moneyRepository.findByMoneySn(moneySn);
+		System.out.println("MoneyBlce => "+ money.getMoneyBlce());
+		MoneyDTO dto = modelMapper.map(money, MoneyDTO.class);
+		return dto;
 	}
 	
 	

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import "../css/charge.css";
 import Table from 'react-bootstrap/Table';
 import Sidebar from "./Sidebar";
@@ -9,31 +9,57 @@ import axios from 'axios';
 
 
 function Charge(props) {
-    // const onClick =() =>{
-    //     alert('충전페이지로 이동합니다.');
-    // }
 
-    const [money, setMoney] = useState("");
-
+    const [memb, setMemb] = useState([]);
+    const [money, setMoney] = useState(0);
+    const [expMoney, setExpMoney] = useState(0);
+    // const [res, setRes] = useState(0);
+    let res = 0;
+    
     const onMoneyHandler = (event) => {
         setMoney(event.currentTarget.value);
+        /* console.log('typeof(money) => ', typeof(money));
+        console.log('typeof(parseInt(money)) => ', typeof(parseInt(money))); */
     }
+    // const expMoneyHandler = (e) => {
+    //     setExpMoney(e.value + expMoney);
+    // }
 
+    useEffect(() => {
+        setExpMoney(memb.moneyBlce + parseInt(money));
+    }, [money]);
+
+    // useEffect(함수, 배열) : 컴포넌트가 화면에 나타났을 때 자동 실행
+    useEffect(() => {
+        let membSn = sessionStorage.getItem("membSn");
+        // 수행할 함수 
+        axios.get("http://localhost:8888/member/money/"+membSn, 
+        {
+        }).then((res) => {
+            // 서버 결제 API 성공시 로직
+            setMemb(res.data);
+            setExpMoney(res.data.moneyBlce);
+            console.log('res.data => ', res.data);
+            console.log('typeof res.data => ', typeof(res.data));
+            console.log('typeof res.data.moneyBlce => ', typeof(res.data.moneyBlce));
+        })
+        // return () => { // cleanup함수 : useEffect 함수가 다시 실행될 때(실행되기 직전), 
+        //               //                return 함수를 먼저 실행해 주고 넘어가는것?
+        // }
+    }, []); 
+    // 빈 배열을 입력할 경우 컴포넌트가 Mount 될 때에만 실행 - jquery에서 $( document ).ready(function() { } 와 유사
+    // 배열 안에 값을 넣어주면 그 값이 변경될 때마다 실행 
+
+
+
+    // ================ 아임포트 - 카카오페이 ================
     const { IMP } = window;
     IMP.init('imp08030724'); // 결제 데이터 정의
 
-    const [merchantUid, setMerchantUid] = useState("");
-
-    //let a = new Date().getTime();
-    // `mid_${new Date().getTime()}`
-
-    let a ;
     // 가맹점 식별하기
     const onClickCharge = (e) => {
         e.preventDefault();
-        // setMerchantUid(`mid_${new Date().getTime()}`);
         console.log('money => ' + money);
-        // console.log('merchantUid => ' + merchantUid);
 
         const data = {
             pg: 'kakaopay',           // PG사 (필수항목)
@@ -62,8 +88,8 @@ function Charge(props) {
         console.log('imp_uid =>', imp_uid);
         console.log('membSn => ',sessionStorage.getItem('membSn'));
         let body = {
-            transferTyCd: '1',       // 거래종류코드 (01:충전, 02:사용, 03:환전)
-            transferAmt: money,         // 충전금액
+            transferTyCd: '1',      // 거래종류코드 (01:충전, 02:사용, 03:환전)
+            transferAmt: money,     // 충전금액
             payTranserNo: imp_uid,  // 결제거래번호
             member : {
                 membSn : sessionStorage.getItem('membSn') // 회원번호
@@ -82,8 +108,8 @@ function Charge(props) {
             //     method: "post",
             //     headers: { "Content-Type": "application/json" },
             //     body: JSON.stringify({
-            //         transferTyCd: '01',       // 거래종류코드 (01:충전, 02:사용, 03:환전)
-            //         transferAmt: money,         // 충전금액
+            //         transferTyCd: '01',     // 거래종류코드 (01:충전, 02:사용, 03:환전)
+            //         transferAmt: money,     // 충전금액
             //         payTranserNo: imp_uid,  // 결제거래번호
             //         member : {
             //             membSn : sessionStorage.getItem('membSn') // 회원번호
@@ -130,41 +156,38 @@ function Charge(props) {
     }
 
 
-        return (
-            <div className="charge_box">
+    return (
+        <div className="charge_box">
             <div className="charge_sidebar">
             <Sidebar></Sidebar>
             </div>
-            <div className="charge_container">
+        <div className="charge_container">
             <div className="charge_wrap">
             <Table striped>
                 <thead>
                 <tr>
                     <th></th>
                     <th>금액</th>
-
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
                     <td>머니잔액</td>
                     <td>
-                        <div>&nbsp; (원)</div>
-
+                        <div>{memb.moneyBlce} (원)</div>
                     </td>
-
                 </tr>
                 <tr>
                     <td>머니충전액</td>
                     <td>
                         <input value={money} onChange={onMoneyHandler}
-                        type="Integer" className="charge"/>원
+                            type='number' className="charge"/>원
                     </td>
-
                 </tr>
                 <tr>
                     <td>충전결과예정액</td>
-                    <td>(원)</td>
+                    {/* <td onChange={expMoneyHandler}>{expMoney} (원)</td> */}
+                    <td>{expMoney} (원)</td>
                 </tr>
                 </tbody>
             </Table>
@@ -174,11 +197,9 @@ function Charge(props) {
             </Button>
             </div>
             </div>
+        </div>
     </div>
-
-</div>
-
-        );
+    );
 
 }
 

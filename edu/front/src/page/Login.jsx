@@ -115,14 +115,19 @@ function Login() {
             localStorage.setItem('accessToken', res.data.accessToken);
             console.log('accessToken => ',localStorage.getItem("accessToken"));
             sessionStorage.setItem('membSn', res.data.membSn);
-            console.log('membSn => ', sessionStorage.getItem("membSn"));
             sessionStorage.setItem('membCls', res.data.membCls);
             sessionStorage.setItem('membId', res.data.membId);
+            console.log('membSn => ', sessionStorage.getItem("membSn"));
             console.log('membCls => ', sessionStorage.getItem("membCls"));
             console.log('membId => ', sessionStorage.getItem("membId"));
             navigate("/charge")
+            
         })
     }
+
+    
+
+
 
 
     return (

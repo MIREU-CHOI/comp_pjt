@@ -7,7 +7,7 @@ import { useState } from 'react';
 
 const Payment = (effect, deps) => {
     // 세팅 - 라이브러리 호출
-    /*
+/*
     useEffect(() => {
         const jquery = document.createElement("script");
         jquery.src = "https://code.jquery.com/jquery-1.12.4.min.js";
@@ -15,8 +15,8 @@ const Payment = (effect, deps) => {
         iamport.src = "https://cdn.iamport.kr/js/iamport.payment-1.1.7.js";
         document.head.appendChild(jquery); document.head.appendChild(iamport);
         return () => { 
-        document.head.removeChild(jquery);
-        document.head.removeChild(iamport);
+            document.head.removeChild(jquery);
+            document.head.removeChild(iamport);
         }
     }, []);
 */
@@ -119,9 +119,9 @@ const Payment = (effect, deps) => {
                         <td>결제수단</td>
                         <td>
                             <select>
-                                <option value="">선불머니</option>
-                                <option value="">카트</option>
-                                <option value="">계좌이체</option>
+                                <option value="03">선불머니</option>
+                                <option value="01">카드</option>
+                                <option value="02">계좌이체</option>
                             </select>
                         </td>
                     </tr>

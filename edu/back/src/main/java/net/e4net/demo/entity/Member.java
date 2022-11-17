@@ -157,14 +157,14 @@ public class Member extends CommonData{
 	// default 값 넣어주기 
 	@PrePersist
 	public void setting() {
-		this.membCls = MembCls.USER; // db 컬럼명 : memb_cls
-		this.membStatusCd = "10";
-		this.mobileNo = "01012341234";
-		this.emailAddr = "test@naver.com";
-		this.zipCd = "12345";
-		this.zipAddr = "서울시 강남구";
-		this.detailAddr = "777";
-		this.lastLoginDtm = "20221111170203";
+//		this.membCls = MembCls.ROLE_USER; // db 컬럼명 : memb_cls
+		this.membStatusCd = "10"; 	// 가입상태코드 - 10:가입, 20:휴면, 99:탈퇴
+//		this.mobileNo = "01012341234";
+//		this.emailAddr = "test@naver.com";
+//		this.zipCd = "12345";
+//		this.zipAddr = "서울시 강남구";
+//		this.detailAddr = "777";
+//		this.lastLoginDtm = "20221111170203";
 	}
 	
 

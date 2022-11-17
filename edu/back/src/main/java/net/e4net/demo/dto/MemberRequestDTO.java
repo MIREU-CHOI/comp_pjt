@@ -24,7 +24,7 @@ public class MemberRequestDTO { // Request를 받을 때 쓰이는 dto
                 .membId(membId)
                 .membPwd(passwordEncoder.encode(membPwd))
                 .zipCd(zipCd)
-                .membCls(MembCls.USER)
+                .membCls(MembCls.ROLE_USER)
                 .build();
     }
 

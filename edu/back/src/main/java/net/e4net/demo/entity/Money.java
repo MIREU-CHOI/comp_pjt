@@ -16,6 +16,8 @@ import javax.persistence.Table;
 
 import org.apache.el.parser.AstFalse;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,6 +38,7 @@ public class Money extends CommonData{
 	@Column(name = "MONEY_SN", length = 10)
 	private Long moneySn;	// 회원머니 번호
 	
+	@JsonIgnore
 	@OneToOne(cascade = CascadeType.PERSIST)   // join 할 때 서로를 참조해야 하니까
 //	@JoinColumn  :  외래키를 정의하는 어노테이션 
 	@JoinColumn(name = "MEMB_SN", referencedColumnName = "MEMB_SN")

@@ -6,7 +6,7 @@ import { Button, Form, InputGroup, DropdownButton, Dropdown }
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-function Join2(props) {
+function Join2_back(props) {
     const navigate = useNavigate();  
     // const [val, setVal] = useState("");
     const [membId, setMembId] = useState("");
@@ -37,9 +37,6 @@ function Join2(props) {
         membPwd:"",
         membNm: "",
         detailAddr: "",
-        zipCd: "",
-        zipAddr:"",
-        membCls: "",
     })
     const changeValue = (e) => {
         console.log(e.target.name, e.target.value);
@@ -98,9 +95,8 @@ function Join2(props) {
         setVal({
             ...val, // 스프레드 연산자 
             emailAddr: emailAddr,
-            membCls: membCls
         })
-    }, [emailAddr, membCls]);
+    }, [emailAddr]);
 
     // --------------------- 회원구분 클릭 시 ------------------------
     const handleChange = e => {
@@ -127,7 +123,7 @@ function Join2(props) {
         event.preventDefault();
         console.log('중복확인 버튼 click!');
 
-        axios.get("http://localhost:8888/member/exists/"+val.membId
+        axios.get("http://localhost:8888/member/exists/"+membId
         ).then((res) => {
             console.log(res.data);
             if(res.data == false) {
@@ -145,19 +141,19 @@ function Join2(props) {
         event.preventDefault();
         console.log('회원가입 버튼 click!');
 
-        // let body = {
-        //     membId: membId,
-        //     membPwd: password,
-        //     membNm: membNm,
-        //     mobileNo: phone,
-        //     // email: Email,
-        //     emailAddr: emailAddr,
-        //     zipCd: zipCd,
-        //     zipAddr: zipAddr,
-        //     detailAddr: detailAddr,
-        //     membCls: membCls.membCls
-        // }
-        // const data = JSON.stringify(body);
+        let body = {
+            membId: membId,
+            membPwd: password,
+            membNm: membNm,
+            mobileNo: phone,
+            // email: Email,
+            emailAddr: emailAddr,
+            zipCd: zipCd,
+            zipAddr: zipAddr,
+            detailAddr: detailAddr,
+            membCls: membCls.membCls
+        }
+        const data = JSON.stringify(body);
         if(idChkVal == false){
             alert("아이디 중복 확인을 해주세요");
             return;
@@ -169,13 +165,13 @@ function Join2(props) {
         if(idChkVal == true || phoneChkVal == true){
             console.log('idChkVal => ', idChkVal);
             console.log('phoneChkVal => ', phoneChkVal);
-            axios.post("http://localhost:8888/auth/signup", val, {
+            axios.post("http://localhost:8888/auth/signup", data, {
             headers: {
                 "Content-Type": "application/json",
                 }
             }).then((res) => {
                 console.log(res.data);
-                if(confirmPassword !== val.membPwd) {
+                if(confirmPassword !== password) {
                     alert("비밀번호와 비밀번호 확인이 일치하지 않습니다")                     
                 } else{
                     alert("회원가입 완료")
@@ -189,10 +185,10 @@ function Join2(props) {
     const onCerNumSendHandler = (event) => {
         event.preventDefault();
         console.log('인증번호 전송 버튼 click!');
-        console.log('Phone => '+val.mobileNo);
+        console.log('Phone => '+phone);
 
-        axios.get("http://localhost:8888/check/sendSMS/" + val.mobileNo,
-        {
+        axios.get("http://localhost:8888/check/sendSMS/" + phone,
+         {
         // headers: {
         //     "Content-Type": "application/json",
         //     }
@@ -257,7 +253,7 @@ function Join2(props) {
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                     <Form.Label >아이디 (*)</Form.Label>
                     <div className='inputGroup'>
-                        <Form.Control type="text" name='membId' value={val.membId} onChange={changeValue} style={{marginRight:'10px'}}/>
+                        <Form.Control type="text"  value={membId} onChange={onMembIdHandler} style={{marginRight:'10px'}}/>
                         {/* 중복확인 버튼 옆에 두고 싶은데   style={{float:'left'}}   안 먹음 ㅠ */}
                         <Button variant="primary" type="button" style={{width:'100px'}} onClick={onIdChkHandler} >
                             중복확인
@@ -271,7 +267,7 @@ function Join2(props) {
                 <Form.Group className="mb-3" controlId="formBasicPassword">
                     <Form.Label>비밀번호 (*)</Form.Label>
                     <div className='inputGroup'>
-                    <Form.Control type="password" value={val.membPwd} name="membPwd" onChange={changeValue}/>
+                    <Form.Control type="password" value={password} name={password} onChange={onPasswordHandler}/>
                     </div>
                 </Form.Group>
 
@@ -282,13 +278,13 @@ function Join2(props) {
 
                 <Form.Group className="mb-3" controlId="formBasicPassword">
                     <Form.Label>성명 (*)</Form.Label>
-                    <Form.Control type="text" name='membNm' value={val.membNm} onChange={changeValue}/>
+                    <Form.Control type="text" value={membNm} onChange={onMembNmHandler}/>
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="formBasicPassword">
                     <Form.Label>휴대폰 번호 (*)</Form.Label>
                     <div className='inputGroup'>
-                        <Form.Control type="text" name='mobileNo' value={val.mobileNo} onChange={changeValue}
+                        <Form.Control type="text" value={phone} onChange={onPhoneHandler}
                             placeholder="- 없이 숫자만 입력하세요." style={{ marginRight:'10px'}}/>
                         <Button variant="primary" type="button" style={{width:'180px'}} onClick={onCerNumSendHandler}>
                             인증번호 전송
@@ -318,17 +314,17 @@ function Join2(props) {
 
                 <Form.Group className="mb-3" controlId="formBasicPassword">
                     <Form.Label>우편번호 (*)</Form.Label>
-                    <Form.Control type="text" name='zipCd' value={val.zipCd} onChange={changeValue}/>
+                    <Form.Control type="text" value={zipCd} onChange={onZipCdHandler}/>
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="formBasicPassword">
                     <Form.Label>주소 (*)</Form.Label>
-                    <Form.Control type="text" name='zipAddr' value={val.zipAddr} onChange={changeValue}/>
+                    <Form.Control type="text" value={zipAddr} onChange={onZipAddrHandler}/>
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="formBasicPassword">
                     <Form.Label>상세주소</Form.Label>
-                    <Form.Control type="text" name='detailAddr' value={val.detailAddr} onChange={changeValue}/>
+                    <Form.Control type="text" value={detailAddr} onChange={onDetailAddrHandler}/>
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="formBasicCheckbox">
@@ -345,4 +341,4 @@ function Join2(props) {
     )
 }
 
-export default Join2;
+export default Join2_back;

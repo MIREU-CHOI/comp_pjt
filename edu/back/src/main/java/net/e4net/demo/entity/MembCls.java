@@ -7,9 +7,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum MembCls {
 	
-	USER("ROLE_USER"),
-    ADMIN("ROLE_ADMIN"),
-    SELLER("ROLE_SELLER")
+	ROLE_USER("ROLE_USER"),
+	ROLE_ADMIN("ROLE_ADMIN"),
+	ROLE_SELLER("ROLE_SELLER")
     ;
 
     private final String value;

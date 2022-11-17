@@ -62,6 +62,13 @@ public class MemberController {
 		return ResponseEntity.status(HttpStatus.OK).body(transDto);
 	}
 	
+	// 회원 머니 조회
+	@GetMapping("/member/money/{membSn}")
+	public ResponseEntity<MoneyDTO> selectMoney(@PathVariable("membSn") Long membSn){
+		 MoneyDTO dto = memberService.selectMoney(membSn);
+		 return ResponseEntity.status(HttpStatus.OK).body(dto);
+	}
+	
 	
 	
 
@@ -78,7 +85,6 @@ public class MemberController {
 //		return ResponseEntity.ok(memberService.checkMembIdDuplicate(membId));
 	}
 
-	
 	// -------------- 221111 security login & join --------------
 	// 우편번호
 	@GetMapping("/member/me")
@@ -88,20 +94,17 @@ public class MemberController {
 		return ResponseEntity.ok((myInfoBySecurity));
 		// return ResponseEntity.ok(memberService.getMyInfoBySecurity());
 	}
-
 	@PostMapping("/member/nickname")
 	public ResponseEntity<MemberDTO> setMembZipCd(@RequestBody MemberDTO request) {
 		return ResponseEntity.ok(memberService.changeMemberZipCd(request.getMembId(), request.getMembPwd()));
 	}
-
 	@PostMapping("/member/password")
 	public ResponseEntity<MemberDTO> setMembPwd(@RequestBody ChangePasswordRequestDTO request) {
 		return ResponseEntity
 				.ok(memberService.changeMembPwd(request.getMembId(), request.getExMembPwd(), request.getNewMembPwd()));
 	}
 
-
-	// AuthController 의 signup 과 join 메소드로 처리함
+	// * AuthController 의 signup 과 join 메소드로 처리함
 	// -------------- 221109 --------------
 	@PostMapping("/member/join")
 	public ResponseEntity<MemberDTO> join(@RequestBody MemberDTO dto) {
@@ -111,7 +114,6 @@ public class MemberController {
 		System.out.println("가입완료 membSn => " + membSn);
 		return new ResponseEntity<MemberDTO>(dto, HttpStatus.OK);
 	}
-
 
 	// -------------- 221108 --------------
 //	@RequestMapping("/member/insert")

@@ -12,5 +12,5 @@ import net.e4net.demo.entity.Member;
 public interface MoneyRepository extends JpaRepository<Money, Long>{
 
 //	public Money findMoneyByMoneySn(Long MoneySn); //selectOne
-	Money findByMoneySn(Long MoneySn);
+	Money findByMoneySn(Long MoneySn); // 회원 한명 기존 머니잔고 조회; select * from tb_memb_money where money_sn = money_sn;
 }
