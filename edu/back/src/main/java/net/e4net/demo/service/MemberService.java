@@ -1,11 +1,13 @@
 package net.e4net.demo.service;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 import org.json.simple.JSONObject;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,13 +16,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.e4net.demo.config.SecurityUtil;
 import net.e4net.demo.dto.MoneyDTO;
+import net.e4net.demo.dto.GoodsDTO;
 import net.e4net.demo.dto.MemberDTO;
 import net.e4net.demo.dto.MemberResponseDTO;
+import net.e4net.demo.dto.MerchantDTO;
 import net.e4net.demo.dto.MoneyTransferHstDTO;
 import net.e4net.demo.entity.Money;
 import net.e4net.demo.entity.MoneyTransferHst;
+import net.e4net.demo.entity.Goods;
 import net.e4net.demo.entity.Member;
+import net.e4net.demo.entity.Merchant;
+import net.e4net.demo.repository.GoodsRepository;
 import net.e4net.demo.repository.MemberRepository;
+import net.e4net.demo.repository.MerchantRepository;
 import net.e4net.demo.repository.MoneyRepository;
 import net.e4net.demo.repository.MoneyTransferRepository;
 import net.nurigo.java_sdk.api.Message;
@@ -32,10 +40,12 @@ import net.nurigo.java_sdk.exceptions.CoolsmsException;
 @RequiredArgsConstructor
 public class MemberService {
 	
+	private final PasswordEncoder passwordEncoder;
 	private final MoneyRepository moneyRepository;
 	private final MoneyTransferRepository moneyTransferRepository;
 	private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;
+	private final MerchantRepository merchantRepository;
+	private final GoodsRepository goodsRepository;
 	
 	private final ModelMapper modelMapper;
 	
@@ -63,11 +73,6 @@ public class MemberService {
 	@Transactional
 	public Money updateMoney(Long membSn, Long amount){
 		log.info("MemberService :: Call updateMoney Method!");
-//		Long moneySn = membSn; 
-//		Money money = moneyRepository.findMoneyByMoneySn(moneySn);
-//		Long membSn = transDto.getMember().getMembSn();
-//		transDto.getMember().get
-//		Optional<Money> money = moneyRepository.findById(moneySn);
 		Money money = moneyRepository.findByMoneySn(membSn);
 		Long balance = money.getMoneyBlce(); // 기존 잔고
 		System.out.println("balance => "+balance);
@@ -92,6 +97,36 @@ public class MemberService {
 		MoneyDTO dto = modelMapper.map(money, MoneyDTO.class);
 		return dto;
 	}
+	
+	// 가맹점 조회
+	public List<MerchantDTO> getAllMerchants(){
+		log.info("MemberService :: getAllMerchants");
+		Type listType = new TypeToken<List<MerchantDTO>>(){}.getType();
+		List<Merchant> mercList = merchantRepository.findAll();
+		List<MerchantDTO> dtoList = modelMapper.map(mercList, listType);
+//		System.out.println(dtoList);
+		return dtoList;
+	}
+	// 가맹점의 상품 조회
+	public List<GoodsDTO> getMercGoods(String goodsNo){
+		log.info("MemberService :: getMercGoods sn=>{}",goodsNo);
+		Type listType = new TypeToken<List<GoodsDTO>>(){}.getType();
+//		List<Goods> enList = goodsRepository.findAll();
+		Goods goods = goodsRepository.findById(goodsNo).get();
+		GoodsDTO dto = modelMapper.map(goods, GoodsDTO.class);
+//		System.out.println(goods.get().getGoodsNm());
+//		List<Goods> goodList = goodsRepository.findByMerchantMerchantSn(goodsNo);
+		List<GoodsDTO> dtoList = modelMapper.map(goods.getClass(), listType);
+		return dtoList;
+	}
+	
+	
+	
+//	public List<MemberDTO> getAllMembers(){
+//	return memberRepository.getAllMembers();
+//}
+	
+	
 	
 	
 	

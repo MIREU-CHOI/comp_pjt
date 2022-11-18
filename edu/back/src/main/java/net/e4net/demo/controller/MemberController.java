@@ -19,8 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.e4net.demo.dto.ChangePasswordRequestDTO;
+import net.e4net.demo.dto.GoodsDTO;
 import net.e4net.demo.dto.MemberDTO;
 import net.e4net.demo.dto.MemberRequestDTO;
+import net.e4net.demo.dto.MerchantDTO;
 import net.e4net.demo.dto.MoneyDTO;
 import net.e4net.demo.dto.MoneyTransferHstDTO;
 import net.e4net.demo.dto.MemberDTO;
@@ -38,7 +40,6 @@ public class MemberController {
 	private final MemberService memberService;
 	private final CertificationService certificationService;
 	
-
 	// 휴대폰번호 인증 coolSMS 221110
 	@GetMapping("/check/sendSMS/{mobileNo}")
 	public ResponseEntity<String> sendSMS(@PathVariable("mobileNo") String mobileNo) {
@@ -53,10 +54,10 @@ public class MemberController {
 	// 머니 충전 221115
 	@PostMapping("/member/charge")
 	public ResponseEntity<MoneyTransferHstDTO> chargeMoney(@RequestBody MoneyTransferHstDTO transDto) {
-		System.out.println("getTransferAmt => "+transDto.getTransferAmt());
 		Long membSn = transDto.getMember().getMembSn();
+		log.info("MemberController :: chargeMoney membSn:{}",membSn);
+		System.out.println("getTransferAmt => "+transDto.getTransferAmt());
 		Long amount = transDto.getTransferAmt();
-		log.info("MemberController Layer :: chargeMoney membSn:{}",membSn);
 		memberService.insertMoneyTrans(transDto);
 		memberService.updateMoney(membSn, amount);
 		return ResponseEntity.status(HttpStatus.OK).body(transDto);
@@ -65,9 +66,31 @@ public class MemberController {
 	// 회원 머니 조회
 	@GetMapping("/member/money/{membSn}")
 	public ResponseEntity<MoneyDTO> selectMoney(@PathVariable("membSn") Long membSn){
-		 MoneyDTO dto = memberService.selectMoney(membSn);
-		 return ResponseEntity.status(HttpStatus.OK).body(dto);
+		log.info("MemberController :: selectMoney membSn:{}",membSn);
+		MoneyDTO dto = memberService.selectMoney(membSn);
+		return ResponseEntity.status(HttpStatus.OK).body(dto);
 	}
+	
+	// 가맹점 조회
+	@GetMapping("/member/merchants")
+	public ResponseEntity<List<MerchantDTO>> getAllMerchants(){
+		log.info("MemberController :: getAllMerchants");
+		List<MerchantDTO> dtoList = memberService.getAllMerchants();
+		return ResponseEntity.status(HttpStatus.OK).body(dtoList);
+	}
+	// 가맹점의 상품 조회 
+	@GetMapping("/member/merchants/{goodsNo}")
+	public ResponseEntity<List<GoodsDTO>> getMercGoods(@PathVariable("goodsNo") String goodsNo){
+		log.info("MemberController :: getMercGoods sn=>{}",goodsNo);
+		List<GoodsDTO> dtoList = memberService.getMercGoods(goodsNo);
+		return ResponseEntity.status(HttpStatus.OK).body(dtoList);
+	}
+	
+	
+	
+	
+	
+	
 	
 	
 	

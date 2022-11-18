@@ -35,32 +35,32 @@ public class Merchant extends CommonData{
 
 	@OneToOne   // join 할 때 서로를 참조해야 하니까
 //	@JoinColumn  :  외래키를 정의하는 어노테이션 
-	@JoinColumn(name = "MEMB_SN", referencedColumnName = "MEMB_SN", updatable = false, insertable = false)
+	@JoinColumn(name = "MEMB_SN", referencedColumnName = "MEMB_SN")
 	private Member member;		// 회원번호
 	
-	@Column(name = "MERCHANT_NM", length = 100, nullable = false)
-	private String merchantNm;	// 가맹점명
+	@Column(name = "MERCHANT_NM", nullable = false)
+	private String merchantNm;	// 가맹점명 , length = 100
 	
-	@Column(name = "MERCHANT_DESC", length = 4000)
-	private String merchantDesc;// 가맹점 설명
+	@Column(name = "MERCHANT_DESC")
+	private String merchantDesc;// 가맹점 설명 , length = 4000
 	
-	@Column(name = "MERCHANT_URL", length = 100)
-	private String merchantUrl;	// 홈페이지URL
+	@Column(name = "MERCHANT_URL")
+	private String merchantUrl;	// 홈페이지URL , length = 100
 	
-	@Column(name = "TEL_NO", length = 20)
-	private String telNo;		// 전화번호
+	@Column(name = "TEL_NO")
+	private String telNo;		// 전화번호 , length = 20
 	
-	@Column(name = "EMAIL_ADDR", length = 100)
-	private String emailAddr;	// 이메일주소
+	@Column(name = "EMAIL_ADDR")
+	private String emailAddr;	// 이메일주소 , length = 100
 	
-	@Column(name = "ZIP_CD", length = 6)
-	private String zipCd;		// 우편번호
+	@Column(name = "ZIP_CD")
+	private String zipCd;		// 우편번호 , length = 6
 	
-	@Column(name = "ZIP_ADDR", length = 150)
-	private String zipAddr;		// 우편번호주소
+	@Column(name = "ZIP_ADDR")
+	private String zipAddr;		// 우편번호주소 , length = 150
 	
-	@Column(name = "DETAIL_ADDR", length = 150)
-	private String detailAddr;	// 상세주소 
+	@Column(name = "DETAIL_ADDR")
+	private String detailAddr;	// 상세주소 , length = 150
 
 	@Builder
 	private Merchant(String useYn, Long frstRegistMembSn, Timestamp frstRegistDt, Long lastRegistMembSn,

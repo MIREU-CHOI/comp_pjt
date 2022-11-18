@@ -39,7 +39,7 @@ function Join2(props) {
         detailAddr: "",
         zipCd: "",
         zipAddr:"",
-        membCls: "",
+        membCls: "ROLE_USER",
     })
     const changeValue = (e) => {
         console.log(e.target.name, e.target.value);
@@ -91,7 +91,7 @@ function Join2(props) {
     console.log('emailAddr =>',emailAddr); //ex) hello@naver.com
     
     useEffect(()=> {
-        setMembCls("ROLE_USER");
+        setMembCls("ROLE_USER");    // 회원가입 페이지 실행 시, 회원구분을 user 로 기본값 설정 
     }, []);
 
     useEffect(() => {
@@ -106,16 +106,15 @@ function Join2(props) {
     const handleChange = e => {
         // e.preventDefault();  // <= 이걸 하면 라디오 클릭이 이상함 (두번 클릭해야 됨)
         const { name, value } = e.target;
-        setMembCls({
-          [name]: value
-        });
+        // setMembCls({
+        //   [name]: value  // <= 이렇게 하면 membCls.membCls 이렇게 가져와야 됨 ㅠ
+        // });  
+        setMembCls(e.target.value);
     };
     console.log('h membCls => ', membCls); // useEffect 보다 한 박자 느린 듯..? 그래서 자꾸 반대로 콘솔 찍히는 것 같은데
     useEffect(() => {
         // setMembCls(membCls);
         console.log('membCls => ', membCls);
-        console.log('membCls.membCls => ', membCls.membCls);
-        console.log('typeof membCls => ', typeof(membCls.membCls));
         console.log('=============================');
     }, [membCls]);
 
@@ -169,6 +168,7 @@ function Join2(props) {
         if(idChkVal == true || phoneChkVal == true){
             console.log('idChkVal => ', idChkVal);
             console.log('phoneChkVal => ', phoneChkVal);
+            console.log('val.membCls => ', val.membCls);
             axios.post("http://localhost:8888/auth/signup", val, {
             headers: {
                 "Content-Type": "application/json",

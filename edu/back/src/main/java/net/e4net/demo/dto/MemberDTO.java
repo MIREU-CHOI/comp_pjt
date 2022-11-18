@@ -34,7 +34,7 @@ public class MemberDTO {
 	private Long frstRegistMembSn;
 	private Timestamp frstRegistDt;
 	private Long lastRegistMembSn;
-	private Timestamp lastRegistDt; 
+	private Timestamp lastChangeDt; 
 	
 	
 	public MemberDTO () {
@@ -62,8 +62,8 @@ public class MemberDTO {
               .frstRegistMembSn(frstRegistMembSn) //'유저카드이름',
               .lastRegistMembSn(lastRegistMembSn)  //'유저카드코드',
               .frstRegistDt(frstRegistDt)  //'유저카드코드',
-              .lastRegistDt(lastRegistDt)  //'유저카드코드',
               .useYn(useYn)  //'유저카드코드',
+              .lastChangeDt(lastChangeDt)
                 .build();
         return member;
     }
@@ -99,7 +99,7 @@ public class MemberDTO {
                 .frstRegistMembSn(member.getFrstRegistMembSn())
                 .lastRegistMembSn(member.getLastRegistMembSn())
                 .frstRegistDt(member.getFrstRegistDt())
-                .lastRegistDt(member.getLastRegistDt())
+                .lastChangeDt(member.getLastChangeDt())
                 .useYn(member.getUseYn())
                 .build();
     }
@@ -110,7 +110,7 @@ public class MemberDTO {
          , String membPwd ,String membNm ,String mobileNo, String zipCd, String zipAddr
          , String detailAddr, String lastLoginDtm,
          Money  membMoney, Long frstRegistMembSn , Long lastRegistMembSn        
-         , Timestamp frstRegistDt , Timestamp lastRegistDt , String useYn) {
+         , Timestamp frstRegistDt , Timestamp lastChangeDt , String useYn) {
        
        this.membSn = membSn;
         this.membCls =membCls;
@@ -127,7 +127,7 @@ public class MemberDTO {
         this.frstRegistMembSn =frstRegistMembSn ;
         this.lastRegistMembSn =lastRegistMembSn ;
         this.frstRegistDt =frstRegistDt ;
-        this.lastRegistDt =lastRegistDt;
+        this.lastChangeDt =lastChangeDt;
         this.useYn = useYn;
     }
     // 아이디와 비밀번호가 일치하는지 검증하는 로직

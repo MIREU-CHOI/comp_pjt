@@ -96,10 +96,10 @@ public class Member extends CommonData{
     
 	@Builder
     public Member(String useYn, Long frstRegistMembSn, Timestamp frstRegistDt, Long lastRegistMembSn,
-			Timestamp lastRegistDt, Long membSn, MembCls membCls, String membStatusCd, String membId, String membPwd,
+			Timestamp lastChangeDt, Long membSn, MembCls membCls, String membStatusCd, String membId, String membPwd,
 			String membNm, String mobileNo, String emailAddr, String zipCd, String zipAddr, String detailAddr,
 			String lastLoginDtm, Money membMoney) {
-		super(useYn, frstRegistMembSn, frstRegistDt, lastRegistMembSn, lastRegistDt);
+		super(useYn, frstRegistMembSn, frstRegistDt, lastRegistMembSn, lastChangeDt);
 		this.membSn = membSn;
 		this.membCls = membCls;
 		this.membStatusCd = membStatusCd;

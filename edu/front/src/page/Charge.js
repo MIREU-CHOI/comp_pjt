@@ -13,8 +13,7 @@ function Charge(props) {
     const [memb, setMemb] = useState([]);
     const [money, setMoney] = useState(0);
     const [expMoney, setExpMoney] = useState(0);
-    // const [res, setRes] = useState(0);
-    let res = 0;
+    const [transSn, setTransSn] = useState(0);
     
     const onMoneyHandler = (event) => {
         setMoney(event.currentTarget.value);
@@ -29,9 +28,10 @@ function Charge(props) {
         setExpMoney(memb.moneyBlce + parseInt(money));
     }, [money]);
 
-    // useEffect(함수, 배열) : 컴포넌트가 화면에 나타났을 때 자동 실행
-    useEffect(() => {
+    // ================ 충전 페이지로 올 때 로그인한 회원의 머니 정보 가져오기 ================
+    useEffect(() => { // useEffect(함수, 배열) : 컴포넌트가 화면에 나타났을 때 자동 실행
         let membSn = sessionStorage.getItem("membSn");
+        console.log('typeof(membSn) => ', typeof(membSn));
         // 수행할 함수 
         axios.get("http://localhost:8888/member/money/"+membSn, 
         {
@@ -41,12 +41,13 @@ function Charge(props) {
             setExpMoney(res.data.moneyBlce);
             console.log('res.data => ', res.data);
             console.log('typeof res.data => ', typeof(res.data));
-            console.log('typeof res.data.moneyBlce => ', typeof(res.data.moneyBlce));
+            // console.log('typeof res.data.moneyBlce => ', typeof(res.data.moneyBlce));
+            console.log('transSn => ',transSn);
         })
         // return () => { // cleanup함수 : useEffect 함수가 다시 실행될 때(실행되기 직전), 
         //               //                return 함수를 먼저 실행해 주고 넘어가는것?
         // }
-    }, []); 
+    }, [transSn]); 
     // 빈 배열을 입력할 경우 컴포넌트가 Mount 될 때에만 실행 - jquery에서 $( document ).ready(function() { } 와 유사
     // 배열 안에 값을 넣어주면 그 값이 변경될 때마다 실행 
 
@@ -65,7 +66,7 @@ function Charge(props) {
             pg: 'kakaopay',           // PG사 (필수항목)
             pay_method: 'card',           // 결제수단 (필수항목)
             merchant_uid: `mid_${new Date().getTime()}`, // 
-            name: 'E4. 노트북 결제 테스트',           // 주문명 (필수항목)
+            name: '머니 충전',           // 주문명 (필수항목)
             amount: money,               // 금액 (필수항목)
             custom_data: { name: '부가정보', desc: '세부 부가정보' },
             buyer_name: "홍길동",          // 구매자 이름
@@ -87,75 +88,71 @@ function Charge(props) {
         console.log('rsp.success =>', rsp.success);
         console.log('imp_uid =>', imp_uid);
         console.log('membSn => ',sessionStorage.getItem('membSn'));
-        let body = {
-            transferTyCd: '1',      // 거래종류코드 (01:충전, 02:사용, 03:환전)
-            transferAmt: money,     // 충전금액
-            payTranserNo: imp_uid,  // 결제거래번호
-            member : {
-                membSn : sessionStorage.getItem('membSn') // 회원번호
-            }
-        }
-        let data = JSON.stringify(body);
+        // let body = {
+        //     transferTyCd: '1',      // 거래종류코드 (01:충전, 02:사용, 03:환전)
+        //     transferAmt: money,     // 충전금액
+        //     payTranserNo: imp_uid,  // 결제거래번호
+        //     member : {
+        //         membSn : sessionStorage.getItem('membSn') // 회원번호
+        //     }
+        // }
+        // let data = JSON.stringify(body);
         if (rsp.success) {
-            // axios로 HTTP 요청
-            axios.post("http://localhost:8888/member/charge", data, {
-            headers: {
-                "Content-Type": "application/json",
-            }
+            axios({
+                url: "http://localhost:8888/member/charge",
+                method: "post",
+                headers: { "Content-Type": "application/json" },
+                data: JSON.stringify({
+                    transferTyCd: '1',     // 거래종류코드 (01:충전, 02:사용, 03:환전)
+                    transferAmt: money,     // 충전금액
+                    payTranserNo: imp_uid,  // 결제거래번호
+                    member : {
+                        membSn : sessionStorage.getItem('membSn') // 회원번호
+                    }
+                })
             })
-            // axios({
-            //     url: "http://localhost:8888/member/charge",
-            //     method: "post",
-            //     headers: { "Content-Type": "application/json" },
-            //     body: JSON.stringify({
-            //         transferTyCd: '01',     // 거래종류코드 (01:충전, 02:사용, 03:환전)
-            //         transferAmt: money,     // 충전금액
-            //         payTranserNo: imp_uid,  // 결제거래번호
-            //         member : {
-            //             membSn : sessionStorage.getItem('membSn') // 회원번호
-            //         }
-            //     })
-            // })
             .then((res) => {
                 // 서버 결제 API 성공시 로직
-                alert('결제 성공하였습니다.');
+                alert('머니 충전 성공하였습니다.');
                 console.log('typeof(res) => ', typeof(res));
-                console.log('data => ', res);
-                moneyUpdate();
+                console.log('res => ', res);
+                console.log('res.data => ', res.data);
+                console.log('res.data.moneyTransferHstSn => ', res.data.moneyTransferHstSn);
+                setTransSn(res.data.moneyTransferHstSn);
+                // moneyUpdate();
             })
         } else {
-            alert(`결제 실패하였습니다. : ${error_msg}`);
+            alert(`머니 충전 실패하였습니다. : ${error_msg}`);
         }
     }
 
-    const moneyUpdate = (event) => {
-        event.preventDefault();
-        console.log('moneyUpdate 실행!');
+    // const moneyUpdate = (event) => {
+    //     event.preventDefault();
+    //     console.log('moneyUpdate 실행!');
 
-        let body = {
-            membSn: sessionStorage.getItem('membSn')
-            // 금액, 
-        }
-        const data = JSON.stringify(body);
+    //     let body = {
+    //         membSn: sessionStorage.getItem('membSn')
+    //         // 금액, 
+    //     }
+    //     const data = JSON.stringify(body);
 
-        axios.get("http://localhost:8888/member/moneyUpdate/" +  data,
-        {
-        // headers: {
-        //     "Content-Type": "application/json",
-        //     }
-        }).then((res) => {
-            console.log(res.data);
-            console.log('회원 머니 수정 완료');
-            // if(res.data == false) {
-            //     alert("이미 존재하는 ID 입니다.")                     
-            // } else{
-            //     alert("사용 가능한 ID 입니다.")
-            // }
-        })
+    //     axios.get("http://localhost:8888/member/moneyUpdate/" +  data,
+    //     {
+    //     // headers: {
+    //     //     "Content-Type": "application/json",
+    //     //     }
+    //     }).then((res) => {
+    //         console.log(res.data);
+    //         console.log('회원 머니 수정 완료');
+    //         // if(res.data == false) {
+    //         //     alert("이미 존재하는 ID 입니다.")                     
+    //         // } else{
+    //         //     alert("사용 가능한 ID 입니다.")
+    //         // }
+    //     })
+    // }
 
-    }
-
-
+//////////////////////////////////////////////////////////////////////////////////////////////////
     return (
         <div className="charge_box">
             <div className="charge_sidebar">

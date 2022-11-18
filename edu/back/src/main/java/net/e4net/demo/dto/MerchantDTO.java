@@ -1,5 +1,6 @@
 package net.e4net.demo.dto;
 
+import lombok.Builder;
 import lombok.Data;
 import net.e4net.demo.entity.Member;
 
@@ -16,5 +17,27 @@ public class MerchantDTO {
 	private String zipCd;		// 우편번호
 	private String zipAddr;		// 우편번호주소
 	private String detailAddr;	// 상세주소
+	
+	public MerchantDTO() {
+		
+	}
+	
+	@Builder
+	public MerchantDTO(Long merchantSn, Member member, String merchantNm, String merchantDesc, String merchantUrl,
+			String telNo, String emailAddr, String zipCd, String zipAddr, String detailAddr) {
+		super();
+		this.merchantSn = merchantSn;
+		this.member = member;
+		this.merchantNm = merchantNm;
+		this.merchantDesc = merchantDesc;
+		this.merchantUrl = merchantUrl;
+		this.telNo = telNo;
+		this.emailAddr = emailAddr;
+		this.zipCd = zipCd;
+		this.zipAddr = zipAddr;
+		this.detailAddr = detailAddr;
+	}
+	
+	
 
 }

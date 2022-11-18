@@ -13,6 +13,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,7 +37,8 @@ public class Goods extends CommonData{
 	@Column(name = "GOODS_NO", length = 10)
 	private String goodsNo;		// 상품번호
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+//	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MERCHANT_SN", referencedColumnName = "MERCHANT_SN", updatable = false, insertable = false)
 	private Merchant merchant;	// 가맹점번호
 	
