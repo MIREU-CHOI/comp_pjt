@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.e4net.demo.dto.BuyHstDTO;
 import net.e4net.demo.dto.ChangePasswordRequestDTO;
 import net.e4net.demo.dto.GoodsDTO;
 import net.e4net.demo.dto.MemberDTO;
@@ -27,9 +28,12 @@ import net.e4net.demo.dto.MoneyDTO;
 import net.e4net.demo.dto.MoneyTransferHstDTO;
 import net.e4net.demo.dto.MemberDTO;
 import net.e4net.demo.entity.Member;
+import net.e4net.demo.entity.Money;
 import net.e4net.demo.entity.MoneyTransferHst;
+import net.e4net.demo.repository.QuerydslRepositoryImpl;
 import net.e4net.demo.service.CertificationService;
 import net.e4net.demo.service.MemberService;
+import retrofit2.http.GET;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,8 +43,9 @@ public class MemberController {
 
 	private final MemberService memberService;
 	private final CertificationService certificationService;
+	private final QuerydslRepositoryImpl querydslRepositoryImpl;
 	
-	// 휴대폰번호 인증 coolSMS 221110
+	// =========== 휴대폰번호 인증 coolSMS 221110 =================
 	@GetMapping("/check/sendSMS/{mobileNo}")
 	public ResponseEntity<String> sendSMS(@PathVariable("mobileNo") String mobileNo) {
 		log.info("수신자 번호 : {}", mobileNo);
@@ -51,19 +56,20 @@ public class MemberController {
 		return ResponseEntity.status(HttpStatus.OK).body(cerNum);
 	}
 	
-	// 머니 충전 221115
+	// =========== 머니 충전 221115 ===========
 	@PostMapping("/member/charge")
 	public ResponseEntity<MoneyTransferHstDTO> chargeMoney(@RequestBody MoneyTransferHstDTO transDto) {
 		Long membSn = transDto.getMember().getMembSn();
 		log.info("MemberController :: chargeMoney membSn:{}",membSn);
 		System.out.println("getTransferAmt => "+transDto.getTransferAmt());
 		Long amount = transDto.getTransferAmt();
-		memberService.insertMoneyTrans(transDto);
+		MoneyTransferHst mth = memberService.insertMoneyTrans(transDto);
+		System.out.println("머니거래이력일련번호 => "+mth.getMoneyTransferHstSn());
 		memberService.updateMoney(membSn, amount);
 		return ResponseEntity.status(HttpStatus.OK).body(transDto);
 	}
 	
-	// 회원 머니 조회
+	// ============= 회원 머니 조회 =============
 	@GetMapping("/member/money/{membSn}")
 	public ResponseEntity<MoneyDTO> selectMoney(@PathVariable("membSn") Long membSn){
 		log.info("MemberController :: selectMoney membSn:{}",membSn);
@@ -71,7 +77,7 @@ public class MemberController {
 		return ResponseEntity.status(HttpStatus.OK).body(dto);
 	}
 	
-	// 가맹점 조회
+	// ============= 가맹점 조회 =============
 	@GetMapping("/member/merchants")
 	public ResponseEntity<List<MerchantDTO>> getAllMerchants(){
 		log.info("MemberController :: getAllMerchants");
@@ -79,14 +85,50 @@ public class MemberController {
 		return ResponseEntity.status(HttpStatus.OK).body(dtoList);
 	}
 	// 가맹점의 상품 조회 
-	@GetMapping("/member/merchants/{goodsNo}")
-	public ResponseEntity<List<GoodsDTO>> getMercGoods(@PathVariable("goodsNo") String goodsNo){
-		log.info("MemberController :: getMercGoods sn=>{}",goodsNo);
-		List<GoodsDTO> dtoList = memberService.getMercGoods(goodsNo);
+	@GetMapping("/member/merchants/{merchantSn}")
+	public ResponseEntity<List<GoodsDTO>> getMercGoods(@PathVariable("merchantSn") Long merchantSn){
+		log.info("MemberController :: getMercGoods sn=>{}", merchantSn);
+		List<GoodsDTO> dtoList = memberService.getMercGoods(merchantSn);
+		return ResponseEntity.status(HttpStatus.OK).body(dtoList);
+	}
+	// 가맹점의 상품의 가격 조회 
+	@GetMapping("/member/goods/{goodsNo}")
+	public ResponseEntity<GoodsDTO> getGoodsAmt(@PathVariable("goodsNo") String goodsNo){
+		log.info("MemberController :: getMercGoods sn=>{}", goodsNo);
+		GoodsDTO dtoList = memberService.getGoodsAmt(goodsNo);
 		return ResponseEntity.status(HttpStatus.OK).body(dtoList);
 	}
 	
+	// =========== (1) "선불머니"로 결제 221121 ===========
+	@PostMapping("/member/payMoney")
+	public ResponseEntity<MoneyTransferHst> payMoney(@RequestBody BuyHstDTO buyHstDto) {
+		Long membSn = buyHstDto.getMember().getMembSn(); 
+		log.info("MemberController :: payMoney membSn:{}",membSn);
+		System.out.println("BuyAmt => "+buyHstDto.getBuyAmt());
+		MoneyTransferHst mth = memberService.payMoney(buyHstDto);
+		return ResponseEntity.status(HttpStatus.OK).body(mth); // 머니거래이력 페이지로 가자! 
+	}
 	
+	// =========== (2) "카드(카카오페이)"로 결제 221121 ===========
+	@PostMapping("/member/payCard")
+	public ResponseEntity<BuyHstDTO> payCard(@RequestBody BuyHstDTO buyHstDto) {
+		Long membSn = buyHstDto.getMember().getMembSn(); 
+		log.info("MemberController :: payCard membSn:{}",membSn);
+//		System.out.println("BuyAmt => "+buyHstDto.getBuyAmt());
+		BuyHstDTO dto = memberService.payCard(buyHstDto);
+		return ResponseEntity.status(HttpStatus.OK).body(dto); // 머니거래이력 페이지로 가자! 
+	}
+	
+	// 거래내역 페이지
+	@GetMapping("/member/moneyTransferHst/{membSn}")
+	public ResponseEntity<List<MoneyTransferHstDTO>> getMembMoneyTransferHst(
+					@PathVariable("membSn") Long membSn){
+//		Long membSn = member.getMembSn();
+		log.info("MemberController :: 거래내역 가져오자 sn=>{}",membSn);
+		List<MoneyTransferHstDTO> dtoList = 
+				memberService.getMembMoneyTransferHst(membSn);
+		return ResponseEntity.status(HttpStatus.OK).body(dtoList);
+	}
 	
 	
 	

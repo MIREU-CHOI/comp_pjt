@@ -11,8 +11,8 @@ import axios from 'axios';
 function Charge(props) {
 
     const [memb, setMemb] = useState([]);
-    const [money, setMoney] = useState(0);
-    const [expMoney, setExpMoney] = useState(0);
+    const [money, setMoney] = useState("");
+    const [expMoney, setExpMoney] = useState();
     const [transSn, setTransSn] = useState(0);
     
     const onMoneyHandler = (event) => {
@@ -119,6 +119,7 @@ function Charge(props) {
                 console.log('res.data => ', res.data);
                 console.log('res.data.moneyTransferHstSn => ', res.data.moneyTransferHstSn);
                 setTransSn(res.data.moneyTransferHstSn);
+                setMoney("");
                 // moneyUpdate();
             })
         } else {
@@ -184,7 +185,13 @@ function Charge(props) {
                 <tr>
                     <td>충전결과예정액</td>
                     {/* <td onChange={expMoneyHandler}>{expMoney} (원)</td> */}
-                    <td>{expMoney} (원)</td>
+                    
+                    {
+                        expMoney === NaN
+                        ? setExpMoney(0)
+                        : <td>{expMoney} (원)</td>
+                    }
+                    {/* {expMoney}  */}
                 </tr>
                 </tbody>
             </Table>

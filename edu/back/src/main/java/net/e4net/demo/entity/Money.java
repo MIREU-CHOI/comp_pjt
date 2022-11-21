@@ -46,6 +46,12 @@ public class Money extends CommonData{
 	
 	@Column(name = "MONEY_BLCE", length = 15)
 	private Long moneyBlce;	// 머니잔고 
+
+	public void setMoneyBlce(Long moneyBlce) {
+		this.moneyBlce = moneyBlce;
+	}
+	
+	
 	
 	// 미르 
 	@Builder
@@ -64,14 +70,13 @@ public class Money extends CommonData{
 		this.moneyBlce = 0l;
 	}
 	
-	
-	
 	// 무조건 이 빌드패턴을 이용해야만 하도록 함 
 	public static Money createMembMoney(Member member) {
 		return Money.builder()
 				.member(member)
 				.build();
 	}
+
 	
 	// 교육 
 //	@Builder

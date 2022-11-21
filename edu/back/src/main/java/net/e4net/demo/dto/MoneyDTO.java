@@ -13,12 +13,17 @@ import net.e4net.demo.entity.Member;
 import net.e4net.demo.entity.Money;
 
 @Data
-@AllArgsConstructor
+//@AllArgsConstructor
 public class MoneyDTO {
 
 	private Long moneySn;	// 회원머니 번호
 	private Member member;	// 회원번호
 	private Long moneyBlce;	// 머니잔고
+	private String useYn;
+	private Long frstRegistMembSn;
+	private Timestamp frstRegistDt;
+	private Long lastRegistMembSn;
+	private Timestamp lastChangeDt; 
 	
 	// 기록용 (안 씀) 
 	private List<MoneyTransferHstDTO> transMoney;
@@ -29,13 +34,8 @@ public class MoneyDTO {
 	public MoneyDTO() {
 	}
 
-	@Builder
-	public MoneyDTO(Long moneySn, Member member, Long moneyBlce) {
-		super();
-		this.moneySn = moneySn;
-		this.member = member;
-		this.moneyBlce = moneyBlce;
-	}
+	
+	
 	
 	/* DTO -> Entity */ // 기록용 (안 씀) 
 	public Money toEntity(PasswordEncoder passwordEncoder) {
@@ -44,6 +44,26 @@ public class MoneyDTO {
 //    			.membSn(membSn)
 				.build();
 		return money;
+	}
+
+
+
+
+	@Builder
+	public MoneyDTO(Long moneySn, Member member, Long moneyBlce, String useYn, Long frstRegistMembSn,
+			Timestamp frstRegistDt, Long lastRegistMembSn, Timestamp lastChangeDt, List<MoneyTransferHstDTO> transMoney,
+			Long membSn) {
+		super();
+		this.moneySn = moneySn;
+		this.member = member;
+		this.moneyBlce = moneyBlce;
+		this.useYn = useYn;
+		this.frstRegistMembSn = frstRegistMembSn;
+		this.frstRegistDt = frstRegistDt;
+		this.lastRegistMembSn = lastRegistMembSn;
+		this.lastChangeDt = lastChangeDt;
+		this.transMoney = transMoney;
+		this.membSn = membSn;
 	}
 	
 //	public static MoneyDTO toDto(Money money) {

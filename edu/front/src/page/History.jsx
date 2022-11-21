@@ -6,6 +6,8 @@ import Sidebar from "./Sidebar";
 import '../css/sidebar.css';
 import DatePicker from "react-datepicker";
 import { ko } from 'date-fns/esm/locale';
+import { useEffect } from 'react';
+import axios from 'axios';
 
 
 function History(props) {
@@ -17,6 +19,41 @@ function History(props) {
         {value}
         </button>
     );
+    const [moneyTransferHst, setMoneyTransferHst] = useState();
+
+    // useEffect(() => {
+    //     axios.get("http://localhost:8888/member/moneyTransferHst/"+membSn, 
+    //     {
+    //     }).then((res) => {
+    //         // console.log('typeof(res) =>', typeof(res))
+    //         // console.log('res =>', res)
+    //         // console.log('typeof(res.data) =>', typeof(res.data))
+    //         // console.log('res.data =>', res.data)
+    //         setMercList(res.data);
+    //         // setMerchantSn(res.data.merchantSn);
+    //         // console.log('typeof mercList =>', typeof(mercList))
+    //         // console.log('mercList =>', mercList)
+    //     }).catch((error) => {
+    //         console.log(error);
+    //     })
+    // }, []);
+    useEffect(() => { 
+        let membSn = sessionStorage.getItem("membSn");
+        console.log('typeof(membSn) => ', typeof(membSn));
+        axios.get("http://localhost:8888/member/moneyTransferHst/"+membSn, 
+        {
+        }).then((res) => {
+            console.log('typeof(res) =>', typeof(res))
+            console.log('res =>', res)
+            console.log('typeof res.data => ', typeof(res.data));
+            console.log('res.data => ', res.data);
+            setMoneyTransferHst(res.data);
+            // console.log('typeof res.data.moneyBlce => ', typeof(res.data.moneyBlce));
+        }).catch((error) => {
+            console.log(error);
+        })
+    }, []); 
+
         return (
             <div className="history_box">
             <div className="history_sidebar">

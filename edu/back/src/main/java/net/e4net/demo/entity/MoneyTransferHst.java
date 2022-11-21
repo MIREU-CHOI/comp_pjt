@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -49,18 +52,31 @@ public class MoneyTransferHst extends CommonData{
 	
 	@Column(name = "PAY_TRANSFER_NO")
 	private String payTranserNo;	// 결제거래번호 , length = 20
+	
+	@JsonIgnore
+	@OneToOne(fetch = FetchType.LAZY) //name : 내 컬럼, referencedColumnName: 내가 참조하는 컬럼 
+	@JoinColumn(name = "BUY_HST_SN", referencedColumnName = "BUY_HST_SN", 
+		updatable = false, insertable = true) //조인하는 컬럼 이름 
+	private BuyHst buyHst;
+
+	
+	
 
 	@Builder
 	private MoneyTransferHst(String useYn, Long frstRegistMembSn, Timestamp frstRegistDt, Long lastRegistMembSn,
 			Timestamp lastRegistDt, Long moneyTransferHstSn, Member member, String transferTyCd, Long transferAmt,
-			String payMeanCd, String payTranserNo) {
-		super(useYn, frstRegistMembSn, frstRegistDt, lastRegistMembSn, lastRegistDt);
+			String payMeanCd, String payTranserNo, BuyHst buyHst) {
+		super("Y", frstRegistMembSn, frstRegistDt, lastRegistMembSn, lastRegistDt);
 		this.moneyTransferHstSn = moneyTransferHstSn;
 		this.member = member;
 		this.transferTyCd = transferTyCd;
 		this.transferAmt = transferAmt;
 		this.payMeanCd = payMeanCd;
 		this.payTranserNo = payTranserNo;
+		this.buyHst = buyHst;
+		if(buyHst != null) {	// 구매이력 pk 를 가져와서 set
+			buyHst.setMoneyTransferHst(this);
+		}
 	}
 	
 	

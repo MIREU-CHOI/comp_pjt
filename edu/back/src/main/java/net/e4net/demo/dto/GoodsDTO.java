@@ -22,8 +22,8 @@ public class GoodsDTO {
 	private String goodsImgPath;// 상품이미지 경로
 	private String goodsDesc;	// 상품 설명
 
-//	public GoodsDTO() {
-//	}
+	public GoodsDTO() {
+	}
 
 	@Builder
 	public GoodsDTO(String goodsNo, Merchant merchant, String goodsNm, String goodsModelNo, Long goodsAmt,

@@ -8,14 +8,17 @@ import java.util.Optional;
 import org.json.simple.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.e4net.demo.config.SecurityUtil;
 import net.e4net.demo.dto.MoneyDTO;
+import net.e4net.demo.dto.BuyHstDTO;
 import net.e4net.demo.dto.GoodsDTO;
 import net.e4net.demo.dto.MemberDTO;
 import net.e4net.demo.dto.MemberResponseDTO;
@@ -23,14 +26,18 @@ import net.e4net.demo.dto.MerchantDTO;
 import net.e4net.demo.dto.MoneyTransferHstDTO;
 import net.e4net.demo.entity.Money;
 import net.e4net.demo.entity.MoneyTransferHst;
+import net.e4net.demo.exception.InsufBlce;
+import net.e4net.demo.entity.BuyHst;
 import net.e4net.demo.entity.Goods;
 import net.e4net.demo.entity.Member;
 import net.e4net.demo.entity.Merchant;
+import net.e4net.demo.repository.BuyHstRepository;
 import net.e4net.demo.repository.GoodsRepository;
 import net.e4net.demo.repository.MemberRepository;
 import net.e4net.demo.repository.MerchantRepository;
 import net.e4net.demo.repository.MoneyRepository;
 import net.e4net.demo.repository.MoneyTransferRepository;
+import net.e4net.demo.repository.QuerydslRepositoryImpl;
 import net.nurigo.java_sdk.api.Message;
 import net.nurigo.java_sdk.exceptions.CoolsmsException;
 
@@ -46,16 +53,18 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final MerchantRepository merchantRepository;
 	private final GoodsRepository goodsRepository;
+	private final BuyHstRepository buyHstRepository;
+	private final QuerydslRepositoryImpl querydslRepositoryImpl;
 	
 	private final ModelMapper modelMapper;
 	
-	// 전체 회원 조회
+	// ============ 전체 회원 조회 =============
 	public List<Member> findMembers() {
 		log.info("MemberService Layer :: Call findMembers Method!");
 		return memberRepository.findAll();
 	}
 	
-	// 머니 충전
+	// ============= 머니 충전 =============
 	public MoneyTransferHst insertMoneyTrans(MoneyTransferHstDTO dto) {
 		log.info("MemberService :: Call insertMoneyTrans Method!");
 		Long membSn = dto.getMember().getMembSn();
@@ -70,7 +79,7 @@ public class MemberService {
 		return moneyTransferRepository.save(entity);
 	}
 	// 머니 충전 시 회원머니 테이블 업데이트 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public Money updateMoney(Long membSn, Long amount){
 		log.info("MemberService :: Call updateMoney Method!");
 		Money money = moneyRepository.findByMoneySn(membSn);
@@ -87,18 +96,20 @@ public class MemberService {
 		return moneyRepository.save(money2);
 	}
 	
-	// 회원 머니 조회
+	// ============= 회원 머니 조회 =============
 	// * 서비스는 컨트롤러에서 dto 를 받아오고 entity 변환해서 디비 처리한 후
 	//   처리한 결과에 따라 다시 dto로 변환해서 컨트롤러에게 dto로 주면 된다!
 	public MoneyDTO selectMoney(Long moneySn) {
 		log.info("MemberService :: selectMoney sn=>{}",moneySn);
 		Money money = moneyRepository.findByMoneySn(moneySn);
-		System.out.println("MoneyBlce => "+ money.getMoneyBlce());
+//		System.out.println("MoneyBlce => "+ money.getMoneyBlce());
+//		modelMapper.getConfiguration().setAmbiguityIgnored(true);	// 이건 setter를 건너뛰는데
+		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT); // 이건 가장 일치하는 값을 찾도록 설정! 연결 타이트하게? 
 		MoneyDTO dto = modelMapper.map(money, MoneyDTO.class);
 		return dto;
 	}
 	
-	// 가맹점 조회
+	// ============= 가맹점 조회 =============
 	public List<MerchantDTO> getAllMerchants(){
 		log.info("MemberService :: getAllMerchants");
 		Type listType = new TypeToken<List<MerchantDTO>>(){}.getType();
@@ -108,15 +119,96 @@ public class MemberService {
 		return dtoList;
 	}
 	// 가맹점의 상품 조회
-	public List<GoodsDTO> getMercGoods(String goodsNo){
-		log.info("MemberService :: getMercGoods sn=>{}",goodsNo);
+	public List<GoodsDTO> getMercGoods(Long merchantSn){
+		log.info("MemberService :: getMercGoods sn=>{}",merchantSn);
 		Type listType = new TypeToken<List<GoodsDTO>>(){}.getType();
 //		List<Goods> enList = goodsRepository.findAll();
-		Goods goods = goodsRepository.findById(goodsNo).get();
-		GoodsDTO dto = modelMapper.map(goods, GoodsDTO.class);
+		List<Goods> goods = goodsRepository.findByMerchantMerchantSn(merchantSn);
+//		Goods goods = goodsRepository.findById(goodsNo).get();
+//		GoodsDTO dto = modelMapper.map(goods, GoodsDTO.class);
 //		System.out.println(goods.get().getGoodsNm());
 //		List<Goods> goodList = goodsRepository.findByMerchantMerchantSn(goodsNo);
-		List<GoodsDTO> dtoList = modelMapper.map(goods.getClass(), listType);
+		List<GoodsDTO> dtoList = modelMapper.map(goods, listType);
+//		List<GoodsDTO> dtoList = modelMapper.map(goods.getClass(), listType);
+		return dtoList;
+	}
+	// 가맹점의 상품의 가격 조회 
+	public GoodsDTO getGoodsAmt(String goodsNo) {
+		log.info("MemberService :: getGoodsAmt sn=>{}",goodsNo);
+		Goods goods = goodsRepository.findByGoodsNo(goodsNo);
+//		System.out.println("MoneyBlce => "+ money.getMoneyBlce());
+//		modelMapper.getConfiguration().setAmbiguityIgnored(true);	// 이건 setter를 건너뛰는데
+//		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT); // 이건 가장 일치하는 값을 찾도록 설정! 연결 타이트하게? 
+		GoodsDTO dto = modelMapper.map(goods, GoodsDTO.class);
+		return dto;
+	}
+	
+	// ===== (1) 머니 결제 : 구매이력/머니거래이력/회원머니 =====
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public MoneyTransferHst payMoney(BuyHstDTO dto){
+		log.debug("MemberService :: Call payMoney Method!");
+		Long membSn = dto.getMember().getMembSn();
+		Money money = moneyRepository.findById(membSn).orElse(null);
+		Long amt = dto.getGoodsAmt() * 1; // 원랜 구매수량까지 받아서 dto.getBuyQtt() 를 곱해야 하는데 일단 이렇게! 
+		Long res = money.getMoneyBlce() - amt;
+		String goodsNo = dto.getGoods().getGoodsNo();
+		log.debug("회원번호{}, 잔고{}, 상품번호{}, 결제 후 금액{}", membSn, money.getMoneyBlce(), goodsNo, res);
+		if(res < 0) {
+			throw new InsufBlce("잔고에 돈이 부족합니다.");
+		}
+		// 1) 구매이력 insert buyHst -------------------
+		BuyHst buyHst = modelMapper.map(dto, BuyHst.class);
+		buyHstRepository.save(buyHst);
+		// 2) 머니거래이력 insert moneyTransferHst ----- builder 자체가 영속성으로 인해 알아서 save 해준다 ?
+		MoneyTransferHst mth = MoneyTransferHst.builder()
+							.buyHst(buyHst)
+							.member(Member.builder().membSn(membSn).build())
+							.transferTyCd("02")
+							.transferAmt(amt)
+							.payMeanCd("03")
+							.build();
+		// 3) 회원머니 update membMoney ----- 변경을 감지해서 값 수정해줌 (알아서 save(update) 해주는 느낌 ?)
+		money.setMoneyBlce(res);
+		return mth;
+	}
+	
+	// ============= (2) 카드(카카오페이) 결제 : 머니거래이력/회원머니 =============
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public BuyHstDTO payCard(BuyHstDTO dto) {
+		log.debug("MemberService :: Call payMoney Method!");
+		Long membSn = dto.getMember().getMembSn();
+		Money money = moneyRepository.findById(membSn).orElse(null);
+		Long amt = dto.getGoodsAmt() * 1; // 원랜 구매수량까지 받아서 dto.getBuyQtt() 를 곱해야 하는데 일단 이렇게! 
+		Long res = money.getMoneyBlce() - amt;
+		String goodsNo = dto.getGoods().getGoodsNo();
+		log.debug("회원번호{}, 잔고{}, 상품번호{}, 결제 후 금액{}", membSn, money.getMoneyBlce(), goodsNo, res);
+		if(res < 0) {
+			throw new InsufBlce("잔고에 돈이 부족합니다.");
+		}
+		// 1) 구매이력 insert buyHst -------------------
+		BuyHst buyHst = modelMapper.map(dto, BuyHst.class);
+		buyHstRepository.save(buyHst);
+		// 2) 머니거래이력 insert moneyTransferHst ----- builder 자체가 영속성으로 인해 알아서 save 해준다 ?
+//		MoneyTransferHst mth = MoneyTransferHst.builder()
+//							.buyHst(buyHst)
+//							.member(Member.builder().membSn(membSn).build())
+//							.transferTyCd("02")
+//							.transferAmt(amt)
+//							.payMeanCd("03")
+//							.build();
+		// 3) 회원머니 update membMoney ----- 변경을 감지해서 값 수정해줌 (알아서 save(update) 해주는 느낌 ?)
+		money.setMoneyBlce(res);
+		return dto;
+	}
+	
+	// 거래내역 페이지
+	public List<MoneyTransferHstDTO> getMembMoneyTransferHst(Long membSn){
+//		Long membSn = member.getMembSn();
+		log.debug("MemberService :: 거래내역 가져오자 sn=>{}",membSn);
+		Type listType = new TypeToken<List<MoneyTransferHstDTO>>(){}.getType();
+		List<MoneyTransferHst> mth = 
+				querydslRepositoryImpl.findByMoneyTransferHst(membSn);
+		List<MoneyTransferHstDTO> dtoList = modelMapper.map(mth, listType);
 		return dtoList;
 	}
 	

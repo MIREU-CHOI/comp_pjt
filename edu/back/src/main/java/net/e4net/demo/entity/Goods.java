@@ -39,7 +39,7 @@ public class Goods extends CommonData{
 	
 //	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "MERCHANT_SN", referencedColumnName = "MERCHANT_SN", updatable = false, insertable = false)
+	@JoinColumn(name = "MERCHANT_SN", referencedColumnName = "MERCHANT_SN")
 	private Merchant merchant;	// 가맹점번호
 	
 	@Column(name = "GOODS_NM", length = 200, nullable = false)
