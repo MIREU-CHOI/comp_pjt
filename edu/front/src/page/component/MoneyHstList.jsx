@@ -1,47 +1,35 @@
 import axios from "axios";
 import React, {useEffect, useState} from "react";
 
-const MoneyHstList = () => {
+const MoneyHstList = ({hstList}) => {
 
-    const [hstList, setHstList] = useState([]);
+    
+    // const [count, setCount] = useState(0); // 아이템 총 개수 //총 카운트로 대체
+    // const [currentPage, setCurrentPage] = useState(1); // 현재 페이지. default 값으로 1
+    // const [postPerPage,setpostPerPage] = useState(5); // 한 페이지에 보여질 아이템 수 
+    // const [indexOfLastPost, setIndexOfLastPost] = useState(0); // 현재 페이지의 마지막 아이템 인덱스
 
-    useEffect(() => { 
-        let membSn = sessionStorage.getItem("membSn");
-        console.log('membSn => ', membSn);
-        axios.get("http://localhost:8888/member/moneyTransferHst/"+membSn, 
-        {
-        }).then((res) => {
-            console.log('typeof(res) =>', typeof(res))
-            console.log('조인!!! res =>', res)
-            console.log('typeof res.data => ', typeof(res.data));
-            console.log('조인!!! res.data => ', res.data);
-            console.log('transferTyCd 처리구분 => ', res.data.transferTyCd);
-            console.log('payMeanCd 결제수단 => ', res.data.payMeanCd);
-            setHstList(res.data);
-        }).catch((error) => {
-            console.log(error);
-        })
-    }, []); 
 
     return (
         <>
         {
             hstList.map((hst, idx) => (
                 <tr key={idx}>
-                <td>{hst.frstRegistDt}</td>
+                <td>{(hst.frstRegistDt).substring(0,10)}</td>
                 {
                     hst.transferTyCd == "01" ?
                     <td>충전</td>
                     : hst.transferTyCd == "02" ?
                     <td>결제</td>
-                    : <p></p>
+                    : <td></td>
+                    // : null
                 }
                 {
                     hst.payMeanCd == "01" ?
                     <td>카드</td>
                     : hst.payMeanCd == "03" ?
                     <td>머니사용</td>
-                    : <p></p>
+                    : <td></td>
                 }
                 <td>{hst.goodsNm}</td>
                 <td>{hst.merchantNm}</td>

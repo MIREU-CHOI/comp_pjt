@@ -17,8 +17,10 @@ import net.e4net.demo.dto.MemberDTO;
 import net.e4net.demo.dto.MemberDTO;
 import net.e4net.demo.dto.TokenDTO;
 import net.e4net.demo.entity.Money;
+import net.e4net.demo.entity.MembLoginHst;
 import net.e4net.demo.entity.Member;
 import net.e4net.demo.jwt.TokenProvider;
+import net.e4net.demo.repository.MembLoginHstRepository;
 import net.e4net.demo.repository.MemberRepository;
 
 @Service
@@ -28,6 +30,7 @@ import net.e4net.demo.repository.MemberRepository;
 public class AuthService {
 	private final AuthenticationManagerBuilder managerBuilder;
     private final MemberRepository memberRepository;
+    private final MembLoginHstRepository membLoginHstRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
 
@@ -46,12 +49,15 @@ public class AuthService {
         return dto;
     }
 
-    public TokenDTO login(MemberDTO requestDto) {
-    	log.info("AuthService Layer :: Call login Method!");
+    public TokenDTO login(MemberDTO requestDto, String connectIp) {
+    	log.debug("AuthService Layer :: Call login Method!");
         UsernamePasswordAuthenticationToken authenticationToken = requestDto.toAuthentication();
-
         Authentication authentication = managerBuilder.getObject().authenticate(authenticationToken);
         Optional<Member> member = memberRepository.findByMembId(requestDto.getMembId());
+        // 로그인 이력
+        Long membSn = member.get().getMembSn();
+        log.debug("membSn => {}",membSn);
+        membLoginHstRepository.save(MembLoginHst.createMembLoginHst(membSn, connectIp));
         return tokenProvider.generateTokenDto(authentication, member);
     }
 

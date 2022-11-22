@@ -1,5 +1,7 @@
 package net.e4net.demo.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,9 +30,9 @@ public class AuthController {
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<TokenDTO> login(@RequestBody MemberDTO requestDto) {
+    public ResponseEntity<TokenDTO> login(@RequestBody MemberDTO requestDto, HttpServletRequest request) {
     	log.info("AuthController Layer :: Call login Method!");
-        return ResponseEntity.ok(authService.login(requestDto));
+        return ResponseEntity.ok(authService.login(requestDto, request.getRemoteAddr()));
     }
 }
 

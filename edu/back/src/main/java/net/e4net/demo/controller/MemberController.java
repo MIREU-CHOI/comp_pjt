@@ -3,6 +3,9 @@ package net.e4net.demo.controller;
 import java.util.List;
 import java.util.Random;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -44,6 +47,8 @@ public class MemberController {
 	private final MemberService memberService;
 	private final CertificationService certificationService;
 	private final QuerydslRepositoryImpl querydslRepositoryImpl;
+	
+	private static final int offset = 5;
 	
 	// =========== 휴대폰번호 인증 coolSMS 221110 =================
 	@GetMapping("/check/sendSMS/{mobileNo}")
@@ -120,14 +125,24 @@ public class MemberController {
 	}
 	
 	// 머니거래내역 페이지
-	@GetMapping("/member/moneyTransferHst/{membSn}")
-	public ResponseEntity<List<MoneyTransferHstDTO>> getMembMoneyTransferHst(
-					@PathVariable("membSn") Long membSn){
+	@PostMapping("/member/moneyTransferHst/{membSn}/{rownum}")
+	public ResponseEntity<Page<MoneyTransferHstDTO>> getMembMoneyTransferHst(
+			@PathVariable("membSn") Long membSn, 
+			@PathVariable("rownum") int rownum,
+			@PageableDefault(page = 1, size = 10) Pageable page){
 		log.info("MemberController :: 거래내역 가져오자 sn=>{}",membSn);
-		List<MoneyTransferHstDTO> dtoList = 
-				memberService.getMembMoneyTransferHst(membSn);
-		return ResponseEntity.status(HttpStatus.OK).body(dtoList);
+		Page<MoneyTransferHstDTO> list = memberService.getMembMoneyTransferHst(page,membSn,rownum);
+		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
+//	@GetMapping("/member/moneyTransferHst/{membSn}")
+//	public ResponseEntity<List<MoneyTransferHstDTO>> getMembMoneyTransferHst(
+//					@PathVariable("membSn") Long membSn){
+//		log.info("MemberController :: 거래내역 가져오자 sn=>{}",membSn);
+//		List<MoneyTransferHstDTO> dtoList = 
+//				memberService.getMembMoneyTransferHst(membSn);
+//		return ResponseEntity.status(HttpStatus.OK).body(dtoList);
+//	}
+	
 	
 	
 	

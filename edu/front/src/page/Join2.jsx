@@ -5,19 +5,15 @@ import { Button, Form, InputGroup, DropdownButton, Dropdown }
     from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Post from './component/Post';
+import DaumPost from 'react-daum-postcode';
+import PopupDom from './component/PopupDom';
+import PopupPostCode from './component/PopupPostCode';
 
 function Join2(props) {
     const navigate = useNavigate();  
-    // const [val, setVal] = useState("");
-    const [membId, setMembId] = useState("");
-    const [password, setPassword] = useState("");
     const [email1, setEmail1] = useState("");
     const [email2, setEmail2] = useState("");
-    const [phone, setPhone] = useState("");
-    const [zipCd, setZipCd] = useState("");
-    const [zipAddr, setZipAddr] = useState("");
-    const [detailAddr, setDetailAddr] = useState("");
-    const [membNm, setMembNm] = useState("");
     const [confirmPassword, setConfirmPassword] = useState(""); 
     const [userCerNum, setUserCerNum] = useState("");
     const [resCerNum, setResCerNum] = useState(0);
@@ -25,13 +21,6 @@ function Join2(props) {
     const [idChkVal, setIdChkVal] = useState(false);
     const [membCls, setMembCls] = useState("");
 
-    // const [member, setMember] = useState([
-    //     {
-    //         id: "Arsen Lüpin",
-    //         pwd : "4444",
-    //         name : "아르센 뤼팽",
-    //     },
-    // ]);
     const [val, setVal] = useState({    // 이게 dto 라고 생각하면 된다!
         membId:"",
         membPwd:"",
@@ -41,6 +30,9 @@ function Join2(props) {
         zipAddr:"",
         membCls: "ROLE_USER",
     })
+    const [fulladdress, setfullAddress] = useState("");
+    const [extraaddress, setextraAddress] = useState({});
+
     const changeValue = (e) => {
         console.log(e.target.name, e.target.value);
         setVal({
@@ -50,34 +42,58 @@ function Join2(props) {
         console.log(val.membId);
     }
 
-
     const onUserCerNumHandler = (event) => {
         setUserCerNum(event.currentTarget.value);
-    }
-    const onMembIdHandler = (event) => {
-        setMembId(event.currentTarget.value);
-    }
-    const onPasswordHandler = (event) => {
-        setPassword(event.currentTarget.value);
     }
     const onConfirmPasswordHandler = (event) => {
         setConfirmPassword(event.currentTarget.value);
     }
-    const onPhoneHandler = (event) => {
-        setPhone(event.currentTarget.value);
+
+    const [enroll_company, setEnroll_company] = useState({
+        address:'',
+    });
+    
+    // const [popup, setPopup] = useState(false);
+    // const openpost = () => {
+    //       setPopup(!popup);
+    // }
+
+    // 팝업창 상태 관리
+    const [isPopupOpen, setIsPopupOpen] = useState(false)
+	// 팝업창 열기
+    const openPostCode = () => {
+        setIsPopupOpen(true)
     }
-    const onZipCdHandler = (event) => {
-        setZipCd(event.currentTarget.value);
+	// 팝업창 닫기
+    const closePostCode = () => {
+        setIsPopupOpen(false)
     }
-    const onZipAddrHandler = (event) => {
-        setZipAddr(event.currentTarget.value);
+    
+    const handleInput = (e) => {
+        setEnroll_company({
+            ...enroll_company,
+            [e.target.name]:e.target.value,
+        })
     }
-    const onDetailAddrHandler = (event) => {
-        setDetailAddr(event.currentTarget.value);
-    }
-    const onMembNmHandler = (event) => {
-        setMembNm(event.currentTarget.value);
-    }
+    const handleChage2 = (data) => {
+        setfullAddress(
+              data
+        );
+        setVal({
+            ...val,
+            zipCd : data,
+        });
+    };
+    const handleChage3 = (e) => {
+        const {name, value} = e.target;
+        setextraAddress({
+            ...extraaddress,
+            [name] : value,
+        });
+    };
+
+    
+    const [zonecode, setZonecode] = useState("");
 
     /* email */
     const firstEmail = useCallback((e) => {
@@ -94,6 +110,16 @@ function Join2(props) {
         setMembCls("ROLE_USER");    // 회원가입 페이지 실행 시, 회원구분을 user 로 기본값 설정 
     }, []);
 
+    useEffect(()=> {
+        console.log(`미르야 침착해!!`);
+        // setZonecode(zonecode);    
+        setVal({
+            ...val,
+            zipCd : zonecode,
+        }); 
+    }, [zonecode]);
+
+console.log(`zipCd => ${val.zipCd}`);
     useEffect(() => {
         setVal({
             ...val, // 스프레드 연산자 
@@ -144,19 +170,6 @@ function Join2(props) {
         event.preventDefault();
         console.log('회원가입 버튼 click!');
 
-        // let body = {
-        //     membId: membId,
-        //     membPwd: password,
-        //     membNm: membNm,
-        //     mobileNo: phone,
-        //     // email: Email,
-        //     emailAddr: emailAddr,
-        //     zipCd: zipCd,
-        //     zipAddr: zipAddr,
-        //     detailAddr: detailAddr,
-        //     membCls: membCls.membCls
-        // }
-        // const data = JSON.stringify(body);
         if(idChkVal == false){
             alert("아이디 중복 확인을 해주세요");
             return;
@@ -226,18 +239,11 @@ function Join2(props) {
 //////////////////////////////////////////////////////////////////////////////////////////////////
     return (
         <div className='container'
-        // style={{ 
-        //     display: 'flex', justifyContent: 'center', alignItems: 'center', 
-        //     width: '100%', height: '100vh'
-        //     }}
-        style={{
-            margin: '50px ',
-        //     display: 'flex',
-        //     justifyContent: 'center',
-        //     alignItems: 'center',
-            width: '100vw',
-            height: '100vh',
-          }}
+            style={{
+                margin: '50px ',
+                width: '100vw',
+                height: '100vh',
+            }}
             >
             <div style={{backgroundColor:'#dadada', borderRadius:'7px'}}>
             <h1 style={{padding:'8px'}}>&nbsp;회원가입</h1></div>
@@ -318,8 +324,24 @@ function Join2(props) {
 
                 <Form.Group className="mb-3" controlId="formBasicPassword">
                     <Form.Label>우편번호 (*)</Form.Label>
-                    <Form.Control type="text" name='zipCd' value={val.zipCd} onChange={changeValue}/>
-                </Form.Group>
+                    <div className='inputGroup'>
+                    <Form.Control type="text" name='zipCd' value={val.zipCd} 
+                        onChange={changeValue} style={{ marginRight:'10px'}}/>
+                    {/* <input type="text" value={extraaddress} /> */}
+                    </div>
+                    </Form.Group>
+                {/* <button onClick={openpost}>우편번호 찾기</button> */}
+                {/* 버튼 클릭 시 팝업 생성 */}
+                <button className='btn btn-primary' type='button'  style={{width:'180px'}}
+                    onClick={openPostCode}>우편번호 검색</button>
+                {/* 팝업 생성 기준 div */}
+                <div id='popupDom'>
+                    {isPopupOpen && (
+                        <PopupDom>
+                            <PopupPostCode zonecode={zonecode} setZonecode={setZonecode} onClose={closePostCode} />
+                        </PopupDom>
+                    )}
+                </div>
 
                 <Form.Group className="mb-3" controlId="formBasicPassword">
                     <Form.Label>주소 (*)</Form.Label>

@@ -8,6 +8,7 @@ import DatePicker from "react-datepicker";
 import { ko } from 'date-fns/esm/locale';
 import axios from 'axios';
 import MoneyHstList from './component/MoneyHstList';
+import Paging from './component/Paging';
 
 
 function History(props) {
@@ -20,6 +21,46 @@ function History(props) {
         {value}
         </button>
     ));
+
+    const [hstList, setHstList] = useState([]);
+    // const [translist, settranslist] = useState([]);  // 리스트에 나타낼 아이템들
+    const [count, setCount] = useState(0); // 아이템 총 개수 //총 카운트로 대체
+    const [currentPage, setCurrentPage] = useState(1); // 현재 페이지. default 값으로 1
+    const [postPerPage,setpostPerPage] = useState(10); // 한 페이지에 보여질 아이템 수 
+    const [indexOfLastPost, setIndexOfLastPost] = useState(0); // 현재 페이지의 마지막 아이템 인덱스
+
+
+    const setPage = (e) => {
+        setCurrentPage(e)
+        if (e == 1 ){
+            setIndexOfLastPost(0)
+        } else {
+            setIndexOfLastPost((e - 1) * 10)
+        };
+    };
+
+    
+    useEffect(() => { 
+        let membSn = sessionStorage.getItem("membSn");
+        let url = "http://localhost:8888/member/moneyTransferHst/"+membSn+"/"
+            +indexOfLastPost+"?page="+(currentPage-1) + "&size=" + postPerPage;
+            // indexOfLastPost <= 이게 백에서 rownum 으로 파라미터 받음 
+        console.log('membSn :',membSn, 'url :',url);
+        axios.post(url, 
+        {
+        }).then((res) => {
+            console.log('typeof(res) =>', typeof(res))
+            console.log('조인!!! res =>', res)
+            console.log('typeof res.data => ', typeof(res.data));
+            console.log('조인!!! res.data.content => ', res.data.content);
+            setCount(res.data.totalElements);
+            console.log("currentPage =>", currentPage);
+            setHstList(res.data.content);
+        }).catch((error) => {
+            console.log(error);
+        })
+    }, [currentPage]); 
+
 
 
     return (
@@ -59,8 +100,8 @@ function History(props) {
                 </td>
                 <td >결제수단</td>
                 <td>
-                    <select>
-                        <option value="03" selected>자체머니결제</option>
+                    <select defaultValue={"03"}>
+                        <option value="03">자체머니결제</option>
                         <option value="01">카드</option>
                         <option value="02">계좌이체</option>
                     </select>
@@ -84,9 +125,14 @@ function History(props) {
                 </tr>
                 </thead>
                 <tbody>
-                    <MoneyHstList></MoneyHstList>
+                    <MoneyHstList hstList={hstList}/>
                 </tbody>
             </table>
+
+            <Paging page={currentPage} count={count} setPage={setPage} 
+                indexOfLastPost={indexOfLastPost} />
+            
+
         </div>
         </div>
     </div>

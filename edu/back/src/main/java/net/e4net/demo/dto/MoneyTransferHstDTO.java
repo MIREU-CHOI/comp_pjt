@@ -13,8 +13,6 @@ import net.e4net.demo.entity.MoneyTransferHst;
 
 @Getter
 @Setter
-//@NoArgsConstructor
-@Builder
 public class MoneyTransferHstDTO {
 	private Long moneyTransferHstSn;// 머니거래이력일련번호
 	private Long membSn;
@@ -28,37 +26,41 @@ public class MoneyTransferHstDTO {
 	private String merchantNm;
 	private Timestamp frstRegistDt; 
 	
+	// 거래내역 페이지를 위한 entity -> toDto 
 	public static MoneyTransferHstDTO toDto(MoneyTransferHst hst) {
 		return MoneyTransferHstDTO.builder()
-				.membSn(hst.getMember().getMembSn())
-				.moneyTransferHstSn(hst.getMoneyTransferHstSn())
-				// 거래내역 컬럼
-				.frstRegistDt(hst.getFrstRegistDt())
-				.transferTyCd(hst.getTransferTyCd())
-				.payMeanCd(hst.getPayMeanCd())
-				.goodsNm(hst.getBuyHst()==null ? null : hst.getBuyHst().getGoods().getGoodsNm())
-				.merchantNm(hst.getBuyHst()==null ? null :hst.getBuyHst().getGoods().getMerchant().getMerchantNm())
-				.transferAmt(hst.getTransferAmt())
-				.build();
+			.membSn(hst.getMember().getMembSn())
+			.moneyTransferHstSn(hst.getMoneyTransferHstSn())
+			// 거래내역 컬럼
+			.frstRegistDt(hst.getFrstRegistDt())
+			.transferTyCd(hst.getTransferTyCd())
+			.payMeanCd(hst.getPayMeanCd())
+			.goodsNm(hst.getBuyHst()==null ? null : hst.getBuyHst().getGoods().getGoodsNm())
+			.merchantNm(hst.getBuyHst()==null ? null :hst.getBuyHst().getGoods().getMerchant().getMerchantNm())
+			.transferAmt(hst.getTransferAmt())
+			.build();
 	}
 	
 	public MoneyTransferHstDTO () {
 	}
 	
+	@Builder
+	public MoneyTransferHstDTO(Long moneyTransferHstSn, Long membSn, Member member, String transferTyCd,
+			Long transferAmt, String payMeanCd, String payTranserNo, BuyHst buyHst, String goodsNm, String merchantNm,
+			Timestamp frstRegistDt) {
+		this.moneyTransferHstSn = moneyTransferHstSn;
+		this.membSn = membSn;
+		this.member = member;
+		this.transferTyCd = transferTyCd;
+		this.transferAmt = transferAmt;
+		this.payMeanCd = payMeanCd;
+		this.payTranserNo = payTranserNo;
+		this.buyHst = buyHst;
+		this.goodsNm = goodsNm;
+		this.merchantNm = merchantNm;
+		this.frstRegistDt = frstRegistDt;
+	}
 	
-//	@Builder
-//	public MoneyTransferHstDTO(Long moneyTransferHstSn, Member member, String transferTyCd, Long transferAmt,
-//			String payMeanCd, String payTranserNo,BuyHst buyHst, Long membSn, Timestamp frstRegistDt) {
-//		this.moneyTransferHstSn = moneyTransferHstSn;
-//		this.member = member;
-//		this.transferTyCd = transferTyCd;
-//		this.transferAmt = transferAmt;
-//		this.payMeanCd = payMeanCd;
-//		this.payTranserNo = payTranserNo;
-//		this.buyHst = buyHst;
-//		this.membSn = membSn;
-//		this.frstRegistDt = frstRegistDt;
-//	}
 	
 	
 }

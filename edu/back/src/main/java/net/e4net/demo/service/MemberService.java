@@ -11,6 +11,11 @@ import org.json.simple.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -202,19 +207,41 @@ public class MemberService {
 		money.setMoneyBlce(res);
 		return dto;
 	}
-	
-	// 거래내역 페이지 (2) 리팩토링  
-	public List<MoneyTransferHstDTO> getMembMoneyTransferHst(Long membSn){
-//		Long membSn = member.getMembSn();
-		log.debug("MemberService :: 거래내역 가져오자 sn=>{}",membSn);
-		
-		List<MoneyTransferHst> hst = moneyTransferRepository.findAllByMemberMembSn(membSn);
-		List<MoneyTransferHstDTO> hstDto = new ArrayList<>();
-		for (MoneyTransferHst e : hst) {
-			hstDto.add(MoneyTransferHstDTO.toDto(e));
-		}
-		return hstDto;
+	// 거래내역 페이지 (4) 리팩토링 + 페이지네이션 
+	public Page<MoneyTransferHstDTO> getMembMoneyTransferHst(
+			Pageable pageable, Long membSn, int rownum){
+		Page<MoneyTransferHstDTO> res = querydslRepositoryImpl.getAllMoneyHst(pageable, membSn, rownum);
+		return res;
 	}
+	
+	// 거래내역 페이지 (3) 리팩토링 + 페이지네이션 - 수정하다가...
+//	public Page<MoneyTransferHstDTO> getMembMoneyTransferHst(
+//			Long membSn, int rownum, Pageable pageable){
+////			Long membSn = member.getMembSn();
+//		log.debug("MemberService :: 거래내역 가져오자 sn=>{}",membSn);
+////		Pageable pageable = PageRequest.of(page.getPageNumber(), page.getPageSize(), Sort.by("moneyTransferHstSn").descending());
+//		List<MoneyTransferHst> hst = moneyTransferRepository.findAllByMemberMembSn(membSn);
+//		List<MoneyTransferHstDTO> hstDto = new ArrayList<>();
+//		for (MoneyTransferHst e : hst) {
+//			hstDto.add(MoneyTransferHstDTO.toDto(e));
+//		}
+//		Page<MoneyTransferHstDTO> list = new PageImpl<>(hstDto, pageable, rownum);
+////				moneyTransferRepository.findAll(pageable);
+//		log.debug("list size => {}", list.getSize());
+//		return list;
+//	}
+	// 거래내역 페이지 (2) 리팩토링  
+//	public List<MoneyTransferHstDTO> getMembMoneyTransferHst(Long membSn){
+////		Long membSn = member.getMembSn();
+//		log.debug("MemberService :: 거래내역 가져오자 sn=>{}",membSn);
+//		
+//		List<MoneyTransferHst> hst = moneyTransferRepository.findAllByMemberMembSn(membSn);
+//		List<MoneyTransferHstDTO> hstDto = new ArrayList<>();
+//		for (MoneyTransferHst e : hst) {
+//			hstDto.add(MoneyTransferHstDTO.toDto(e));
+//		}
+//		return hstDto;
+//	}
 	// 거래내역 페이지
 //	public List<MoneyTransferHstDTO> getMembMoneyTransferHst(Long membSn){
 ////		Long membSn = member.getMembSn();

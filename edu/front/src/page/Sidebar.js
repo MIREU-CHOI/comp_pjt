@@ -31,12 +31,12 @@ import {
               <NavLink exact="true" to="/charge" activeclassname="activeClicked">
                 <CDBSidebarMenuItem icon="columns">머니 충전</CDBSidebarMenuItem>
               </NavLink>
-              <NavLink exact="true" to="/pay" activeclassname="activeClicked">
+              {/* <NavLink exact="true" to="/pay" activeclassname="activeClicked">
                 <CDBSidebarMenuItem icon="table">머니 결제</CDBSidebarMenuItem>
-              </NavLink>
+              </NavLink> */}
               {/* 미르 테스트  */}
               <NavLink exact="true" to="/payment" activeclassname="activeClicked">
-                <CDBSidebarMenuItem icon="table">mr머니 결제</CDBSidebarMenuItem>
+                <CDBSidebarMenuItem icon="table">머니 결제</CDBSidebarMenuItem>
               </NavLink>
               <NavLink exact="true" to="/history" activeclassname="activeClicked">
                 <CDBSidebarMenuItem icon="user">거래 내역</CDBSidebarMenuItem>
