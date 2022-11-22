@@ -1,7 +1,9 @@
 package net.e4net.demo.service;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,7 +45,7 @@ import net.nurigo.java_sdk.exceptions.CoolsmsException;
 
 @Service
 @Slf4j
-@Transactional
+@Transactional(propagation = Propagation.REQUIRES_NEW)
 @RequiredArgsConstructor
 public class MemberService {
 	
@@ -201,16 +203,28 @@ public class MemberService {
 		return dto;
 	}
 	
-	// 거래내역 페이지
+	// 거래내역 페이지 (2) 리팩토링  
 	public List<MoneyTransferHstDTO> getMembMoneyTransferHst(Long membSn){
 //		Long membSn = member.getMembSn();
 		log.debug("MemberService :: 거래내역 가져오자 sn=>{}",membSn);
-		Type listType = new TypeToken<List<MoneyTransferHstDTO>>(){}.getType();
-		List<MoneyTransferHst> mth = 
-				querydslRepositoryImpl.findByMoneyTransferHst(membSn);
-		List<MoneyTransferHstDTO> dtoList = modelMapper.map(mth, listType);
-		return dtoList;
+		
+		List<MoneyTransferHst> hst = moneyTransferRepository.findAllByMemberMembSn(membSn);
+		List<MoneyTransferHstDTO> hstDto = new ArrayList<>();
+		for (MoneyTransferHst e : hst) {
+			hstDto.add(MoneyTransferHstDTO.toDto(e));
+		}
+		return hstDto;
 	}
+	// 거래내역 페이지
+//	public List<MoneyTransferHstDTO> getMembMoneyTransferHst(Long membSn){
+////		Long membSn = member.getMembSn();
+//		log.debug("MemberService :: 거래내역 가져오자 sn=>{}",membSn);
+//		Type listType = new TypeToken<List<MoneyTransferHstDTO>>(){}.getType();
+//		List<MoneyTransferHst> mth = 
+//				querydslRepositoryImpl.findByMoneyTransferHst(membSn);
+//		List<MoneyTransferHstDTO> dtoList = modelMapper.map(mth, listType);
+//		return dtoList;
+//	}
 	
 	
 	

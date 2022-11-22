@@ -119,11 +119,10 @@ public class MemberController {
 		return ResponseEntity.status(HttpStatus.OK).body(dto); // 머니거래이력 페이지로 가자! 
 	}
 	
-	// 거래내역 페이지
+	// 머니거래내역 페이지
 	@GetMapping("/member/moneyTransferHst/{membSn}")
 	public ResponseEntity<List<MoneyTransferHstDTO>> getMembMoneyTransferHst(
 					@PathVariable("membSn") Long membSn){
-//		Long membSn = member.getMembSn();
 		log.info("MemberController :: 거래내역 가져오자 sn=>{}",membSn);
 		List<MoneyTransferHstDTO> dtoList = 
 				memberService.getMembMoneyTransferHst(membSn);

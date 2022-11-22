@@ -43,6 +43,7 @@ function Charge(props) {
             console.log('typeof res.data => ', typeof(res.data));
             // console.log('typeof res.data.moneyBlce => ', typeof(res.data.moneyBlce));
             console.log('transSn => ',transSn);
+            console.log('=========== useEffect ============');
         })
         // return () => { // cleanup함수 : useEffect 함수가 다시 실행될 때(실행되기 직전), 
         //               //                return 함수를 먼저 실행해 주고 넘어가는것?
@@ -103,7 +104,7 @@ function Charge(props) {
                 method: "post",
                 headers: { "Content-Type": "application/json" },
                 data: JSON.stringify({
-                    transferTyCd: '1',     // 거래종류코드 (01:충전, 02:사용, 03:환전)
+                    transferTyCd: '01',     // 거래종류코드 (01:충전, 02:사용, 03:환전)
                     transferAmt: money,     // 충전금액
                     payTranserNo: imp_uid,  // 결제거래번호
                     member : {
@@ -121,6 +122,7 @@ function Charge(props) {
                 setTransSn(res.data.moneyTransferHstSn);
                 setMoney("");
                 // moneyUpdate();
+                console.log('=========== 머니 충전 성공하였습니다 ============');
             })
         } else {
             alert(`머니 충전 실패하였습니다. : ${error_msg}`);

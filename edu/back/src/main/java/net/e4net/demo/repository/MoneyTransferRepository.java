@@ -14,8 +14,8 @@ import net.e4net.demo.entity.Member;
 public interface MoneyTransferRepository 
 	extends JpaRepository<MoneyTransferHst, Long>{
 
-	// 충전 내역 
-	List<MoneyTransferHst> findAllByMember(Member member);
+	// 거래내역 
+	List<MoneyTransferHst> findAllByMemberMembSn(Long membSn);
 
 	// 총 충전 금액 쿼리
 //    @Transactional

@@ -13,7 +13,7 @@
 .history_wrap {
     display: flex;
     flex-direction: column;
-    width: 500px;
+    /* width: 500px; */
 }
 
 .history_box{
@@ -34,5 +34,9 @@ button{
 }
 
 .example-custom-input {
-    float: left;
+    width: 150px;
+    /* float: left; */
+}
+.table {
+    text-align: center;
 }

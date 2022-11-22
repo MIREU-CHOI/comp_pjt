@@ -31,11 +31,11 @@ public class QuerydslRepositoryImpl implements QuerydslRepositoryCustom{
 	@Override
 	public List<MoneyTransferHst> findByMoneyTransferHst(Long membSn) {
 		return queryFactory.selectFrom(mth)
-				.leftJoin(buyHst.buyHst, buyHst)
+				.leftJoin(mth.buyHst, buyHst)
 				.fetchJoin()
-				.leftJoin(goods.goods, goods)
+				.leftJoin(buyHst.goods, goods)
 				.fetchJoin()
-				.leftJoin(merchant.merchant, merchant)
+				.leftJoin(goods.merchant, merchant)
 				.fetchJoin()
 				.where(
 						mth.member.membSn
